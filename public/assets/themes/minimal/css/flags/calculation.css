@@ -1,0 +1,93 @@
+.vodiapicker,
+.vodiapicker2 {
+    display: none;
+}
+
+#a, #a2 {
+    padding-left: 0px;
+}
+
+#a img, #a2 img
+.btn-select img, .btn-select2 img {
+    width: 25px;
+}
+
+#a li, #a2 li {
+    list-style: none;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    cursor: pointer;
+}
+
+#a li:hover, #a2 li:hover {
+    background-color: #f4f3f3;
+}
+
+#a li img, #a2 li img {
+    margin: 5px;
+}
+
+#a li span,
+#a2 li span,
+.btn-select li span,
+.btn-select2 li span {
+    margin-left: 30px;
+}
+
+/* item list */
+
+.b, .b2 {
+    display: none;
+    width: 100%;
+    max-width: 350px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 5px;
+}
+
+.open {
+    display: show !important;
+}
+
+.btn-select, .btn-select2 {
+    margin-top: initial;
+    width: 100%;
+    max-width: 350px;
+    height: 38px;
+    border-radius: 5px;
+    background-color: #fff;
+    border: 1px solid #e9ecef;
+}
+
+.btn-select li,
+.btn-select2 li {
+    list-style: none;
+    float: left;
+    padding-bottom: 0px;
+}
+
+.btn-select:hover li, .btn-select2:hover li {
+    margin-left: 0px;
+}
+
+.btn-select:hover, .btn-select2:hover {
+    background-color: #f4f3f3;
+    border: 1px solid transparent;
+    box-shadow: inset 0 0px 0px 1px #ccc;
+}
+
+.btn-select:focus, .btn-select2:focus {
+    outline: none;
+}
+
+.lang-select, .lang-select2 {
+    /*margin-left: 50px;*/
+}
+.bd,
+.at {
+    display: none;
+}
+.bd.show,
+.at.show {
+    display: block;
+}

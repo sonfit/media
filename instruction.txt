@@ -1,0 +1,32 @@
+#######################
+How to update Remito from version 3.0 to version 4.0
+
+#######################
+
+1) replace in routes/web.php
+
+2) replace in app folder
+
+3) replace in assets/themes/minimal folder and assets/admin folder
+
+4) replace in resources/views folder
+
+5) replace in database/migrations folder
+
+6) replace all files in /config folder
+
+7) Open your browser and visit http://your-sitename/migrate
+
+8) Again   visit http://your-sitename/gateway-update
+
+
+******* [optional] if you want run midtrans gateway, you have to add this on your composer
+
+command: composer require midtrans/midtrans-php
+then
+command: composer anhskohbo/no-captcha
+
+#######################
+Complete Update
+######################
+
