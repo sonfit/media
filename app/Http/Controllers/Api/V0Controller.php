@@ -27,6 +27,7 @@ class V0Controller extends Controller
     public function wallpapersByCategories($id){
         $page = $_GET['page'] ?? 1;
         $length = 20;
+        $limit= ($page-1) * $length ;
         $wallpapers = Categories::findOrFail($id)
             ->wallpapers()
             ->with(['categories' => function($query) use ($id) {
@@ -35,9 +36,13 @@ class V0Controller extends Controller
             ->where('wallpaper_status',1)
             ->distinct()
             ->inRandomOrder()
-            ->paginate($length, ['*'], 'page', $page);
+            ->skip($limit)
+            ->take($length)
+            ->get();
+//            ->paginate($length, ['*'], 'page', $page);
         return WallpapersResource::collection($wallpapers);
     }
+
 
     public function wallpaper($id){
         $isBlock = checkBlockIp() ? 0 : 1;
@@ -57,9 +62,12 @@ class V0Controller extends Controller
         } else {
             $query = $query->orderByDesc($orderBy);
         }
-
+        $limit= ($page-1) * $length ;
         return $query
-        ->paginate($length, ['*'], 'page', $page);
+            ->skip($limit)
+            ->take($length)
+            ->get();
+//        ->paginate($length, ['*'], 'page', $page);
 
     }
 
@@ -84,7 +92,6 @@ class V0Controller extends Controller
         return WallpapersResource::collection(
             $this->getWallpapersByCriteria(checkBlockIp() ? 0 : 1, 'id')
         );
-
     }
 
     public function getSaved(){
