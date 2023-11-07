@@ -55,9 +55,7 @@ class V0Controller extends Controller
 
     public function getWallpapersByCriteria($isBlock, $orderBy, $random = false, $page = 1, $length = 20) {
         $domain = getDomain();
-
         $query = $domain->getWallpaper($isBlock);
-
         if ($random) {
             $query = $query->inRandomOrder();
         } else {
