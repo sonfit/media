@@ -5,6 +5,16 @@
     <link href="{{asset('assets/admin/css/dropzone.min.css')}}" rel="stylesheet">
 
 @endpush
+
+@section('button')
+    @can('admin.wallpapers.edit')
+        <div class="d-flex justify-content-end m-2 text-right">
+            <a class="btn btn-warning btn-sm mr-2" href="{{route('admin.wallpapers.compareImages')}}?action=auto&time=1" target="_blank">
+                <i class="fa fa-spinner"></i> {{trans('Compare')}}
+            </a>
+        </div>
+    @endcan
+@endsection
 @section('content')
 
     @can('admin.wallpapers.create')
