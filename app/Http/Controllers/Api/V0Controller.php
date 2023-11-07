@@ -27,7 +27,6 @@ class V0Controller extends Controller
     public function wallpapersByCategories($id){
         $page = $_GET['page'] ?? 1;
         $length = 20;
-        $limit= ($page-1) * $length ;
         $wallpapers = Categories::findOrFail($id)
             ->wallpapers()
             ->with(['categories' => function($query) use ($id) {
@@ -36,10 +35,7 @@ class V0Controller extends Controller
             ->where('wallpaper_status',1)
             ->distinct()
             ->inRandomOrder()
-            ->skip($limit)
-            ->take($length)
-            ->get();
-//            ->paginate($length, ['*'], 'page', $page);
+            ->paginate($length, ['*'], 'page', $page);
         return WallpapersResource::collection($wallpapers);
     }
 
@@ -62,11 +58,8 @@ class V0Controller extends Controller
             $query = $query->orderByDesc($orderBy);
         }
 
-        $limit= ($page-1) * $length ;
-        return $query->skip($limit)
-            ->take($length)
-            ->get();
-//        ->paginate($length, ['*'], 'page', $page);
+        return $query
+        ->paginate($length, ['*'], 'page', $page);
 
     }
 
