@@ -65,12 +65,11 @@ class V0Controller extends Controller
 
     public function getFeatured(){
         $wallpapers =  WallpapersResource::collection(
-            $this->getWallpapersByCriteria(checkBlockIp() ? 0 : 1, 'wallpaper_feature')
+            $this->getWallpapersByCriteria(checkBlockIp() ? 0 : 1, 'wallpaper_feature',true)
         );
-
         return response()->json([
             'message'=>'save ip successs',
-            'ad_switch'=>1,
+            'ad_switch'=> 1,
             'data'=> $wallpapers,
         ]);
     }
