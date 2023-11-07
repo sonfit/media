@@ -40,10 +40,10 @@ class V0Controller extends Controller
     }
 
     public function wallpaper($id){
-//        $isBlock = checkBlockIp() ? 0 : 1;
-//        $categories = getDomain()->categories()->where('category_checked_ip',$isBlock)->get();
+        $isBlock = checkBlockIp() ? 0 : 1;
+        $categories = getDomain()->categories()->where('category_checked_ip',$isBlock)->get();
         $wallpapers = Wallpapers::findOrFail($id);
-//        $wallpapers->categories =  $categories;
+        $wallpapers->categories =  $categories;
         return new WallpapersResource($wallpapers);
     }
 
