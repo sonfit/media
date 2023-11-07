@@ -20,7 +20,7 @@ class WallpapersResource extends JsonResource
             'id' => $this->id,
             'name' => $this->wallpaper_name ,
             'thumbnail_image' => asset('storage/wallpapers/thumbnails/'.$this->wallpaper_image),
-            'detail_image' => asset('storage/wallpapers/originals/'.$this->wallpaper_image),
+            'detail_image' => asset('storage/wallpapers/thumbnails/'.$this->wallpaper_image),
             'download_image' => asset('storage/wallpapers/originals/'.$this->wallpaper_image),
             'liked' => $this->liked ?? 0,
             'like_count' => rand($this->wallpaper_like_count,1500),
