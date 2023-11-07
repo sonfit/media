@@ -49,8 +49,9 @@ class V0Controller extends Controller
         $wallpapers = Wallpapers::findOrFail($id);
         $wallpapers->increment('wallpaper_view_count');
         $wallpapers->categories =  $categories;
-        return new WallpapersResource($wallpapers);
+        return (new WallpapersResource($wallpapers))->resolve();
     }
+
 
     public function getWallpapersByCriteria($isBlock, $orderBy, $random = false, $page = 1, $length = 20) {
         $domain = getDomain();
