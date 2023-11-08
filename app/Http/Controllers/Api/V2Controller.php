@@ -146,7 +146,7 @@ class V2Controller extends Controller
         $domain = getDomain();
         $query = $domain
             ->getWallpaper($isBlock)
-            ->where('image_extension', '<>', 'image/gif')
+            ->where('wallpaper_extension', '<>', 'image/gif')
             ->where('wallpaper_type',$get_method['type'])
             ->where('wallpaper_status',1);
         if ($random) {
@@ -170,7 +170,7 @@ class V2Controller extends Controller
             ->with(['categories' => function($query) use ($cate_id) {
                 $query->where('categories.id',$cate_id);
             }])
-            ->where('image_extension', '<>', 'image/gif')
+            ->where('wallpaper_extension', '<>', 'image/gif')
             ->where('wallpaper_status',1)
             ->where('wallpaper_type',$type)
             ->distinct()
