@@ -27,6 +27,13 @@ class Domain extends Model
         )->distinct();
     }
 
+
+    public function iplist()
+    {
+        return $this->hasMany(DomainLoginLogs::class,'domain_id');
+    }
+
+
     //================== WALLPAPERS ============
 
     public function wallpapers()
@@ -49,8 +56,6 @@ class Domain extends Model
                 ]);
             }]);
     }
-
-
 
 
 

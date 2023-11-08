@@ -2,8 +2,11 @@
 
 use App\Models\Domain;
 use App\Models\IPLIST;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use \Illuminate\Support\Str;
+use Jenssegers\Agent\Agent;
+use Torann\GeoIP\Facades\GeoIP;
 
 function template($asset = false)
 {
@@ -369,6 +372,28 @@ function createDirectory($path) {
     if (!file_exists($path)) {
         mkdir($path, 0777, true);
     }
+}
+
+
+function domainLogin($domain,$ip_address){
+    $agent =  new Agent();
+    $geoIP =  new GeoIP();
+
+    $location = $geoIP::getLocation($ip_address);
+    $ip_prefix = getIpPrefix(getIp());
+
+    $domainLogin = [
+        'domain_id' => $domain->id,
+        'ip_address' => $ip_address,
+        'ip_prefix' => $ip_prefix,
+        'device_name' => $agent->device(),
+        'browser' => $agent->browser(),
+        'device_name_full' => $agent->getUserAgent(),
+        'platform_name' => $agent->platform() != 0 ? $agent->platform() : 'Other',
+        'country' => (string) $location['country'],
+        'created_at' => Carbon::now()->startOfDay()
+    ];
+    return $domain->iplist()->updateOrCreate($domainLogin)->increment('count', 1);
 }
 
 
