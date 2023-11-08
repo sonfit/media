@@ -36,6 +36,7 @@ class WallpapersResource extends JsonResource
             'size' => 'n/a',
             'wall_tags' => implode(",", $tags),
             'category_name' => $this->wallpaper_name,
+            'cid' => '',
             'category_image' => '',
             'category_image_thumb' => '',
         ];
