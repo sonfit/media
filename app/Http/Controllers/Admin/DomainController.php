@@ -713,8 +713,6 @@ class DomainController extends Controller
         $columnSortOrder = $request->input('order')[0]['dir'];
         $searchValue = $request->input('search')['value'];
 
-//        $domainLogs = Domain::find($id);
-
         $domainLogsQuery = DomainLoginLogs::query();
         $domainLogsQuery->where('domain_id',$id)
             ->when(isset($searchValue), function ($query) use ($searchValue) {

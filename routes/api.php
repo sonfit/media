@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V0Controller;
+use App\Http\Controllers\Api\V2Controller;
 use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -61,5 +62,11 @@ Route::group([], function() {
 //    Route::post('search', [SearchController::class, 'search']);
 
 
+});
+
+Route::group([
+    "prefix" => "v2"
+], function() {
+    Route::post('/getData',[V2Controller::class, 'getData']);
 });
 

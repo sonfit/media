@@ -33,7 +33,7 @@ class Categories extends Model
             [CategoryTag::class, WallpaperTag::class],
             ['category_id','tag_id','id'],
             ['id','tag_id','wallpaper_id']
-        );
+        )->distinct();
     }
 
     public function ringtones()
@@ -43,7 +43,7 @@ class Categories extends Model
             [CategoryTag::class, RingtoneTag::class],
             ['category_id','tag_id','id'],
             ['id','tag_id','ringtone_id']
-        );
+        )->distinct();
     }
 
     public function musics()
@@ -53,7 +53,7 @@ class Categories extends Model
             [CategoryTag::class, MusicTag::class],
             ['category_id','tag_id','id'],
             ['id','tag_id','music_id']
-        );
+        )->distinct();
     }
 
 }

@@ -6,12 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\v0\CategoriesResource;
 use App\Http\Resources\v0\WallpapersResource;
 use App\Models\Categories;
-use App\Models\DomainLoginLogs;
 use App\Models\Wallpapers;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Jenssegers\Agent\Agent;
-use Torann\GeoIP\Facades\GeoIP;
 
 class V0Controller extends Controller
 {
@@ -38,6 +34,7 @@ class V0Controller extends Controller
             ->with(['categories' => function($query) use ($id) {
                 $query->where('categories.id', $id);
             }])
+            ->where('wallpaper_extension','image/jpeg')
             ->where('wallpaper_status',1)
             ->distinct()
             ->inRandomOrder()
@@ -46,7 +43,6 @@ class V0Controller extends Controller
             ->get();
         return WallpapersResource::collection($wallpapers);
     }
-
 
     public function wallpaper($id){
         $isBlock = checkBlockIp() ? 0 : 1;
@@ -57,10 +53,12 @@ class V0Controller extends Controller
         return (new WallpapersResource($wallpapers))->resolve();
     }
 
-
     public function getWallpapersByCriteria($isBlock, $orderBy, $random = false, $page = 1, $length = 20) {
         $domain = getDomain();
-        $query = $domain->getWallpaper($isBlock)->where('wallpaper_status',1);
+        $query = $domain
+            ->getWallpaper($isBlock)
+            ->where('wallpaper_extension','image/jpeg')
+            ->where('wallpaper_status',1);
         if ($random) {
             $query = $query->inRandomOrder();
         } else {
@@ -76,8 +74,7 @@ class V0Controller extends Controller
     public function getFeatured(){
         list($wallpapers,$domain) = $this->getWallpapersByCriteria(checkBlockIp() ? 0 : 1, 'wallpaper_feature');
         $wallpapers =  WallpapersResource::collection($wallpapers);
-        $ip_address = getIp();
-        domainLogin($domain,$ip_address);
+        domainLogin($domain);
         return response()->json([
             'message'=>'save ip successs',
             'ad_switch'=> $domain->is_ads,

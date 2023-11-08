@@ -375,13 +375,12 @@ function createDirectory($path) {
 }
 
 
-function domainLogin($domain,$ip_address){
+function domainLogin($domain){
     $geoIP =  new GeoIP();
     $agent = new Browser();
-
-    $location = $geoIP::getLocation($ip_address);
+    $ip_address = getIp();
     $ip_prefix = getIpPrefix(getIp());
-
+    $location = $geoIP::getLocation($ip_address);
     $domainLogin = [
         'domain_id' => $domain->id,
         'ip_address' => $ip_address,

@@ -81,7 +81,7 @@
                     {data: 'country', name: 'country'},
                     {data: 'count', name: 'count'},
                 ],
-                [[ 4, 'asc' ]],
+                [[ 4, 'desc' ]],
                 null,
             );
         })
