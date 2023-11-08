@@ -20,6 +20,7 @@ class WallpapersResource extends JsonResource
         }
 
         return [
+            'num' => 12,
             'id' => $this->id,
             'cat_id' => '',
             'wallpaper_type' => $this->wallpaper_type,
