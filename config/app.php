@@ -183,7 +183,6 @@ return [
         App\Providers\RouteServiceProvider::class,
         Anhskohbo\NoCaptcha\NoCaptchaServiceProvider::class,
         \Torann\GeoIP\GeoIPServiceProvider::class,
-        Jenssegers\Agent\AgentServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
         Mavinoo\Batch\BatchServiceProvider::class,
 
@@ -246,7 +245,6 @@ return [
         'NoCaptcha' => Anhskohbo\NoCaptcha\Facades\NoCaptcha::class,
 
         'GeoIP' => \Torann\GeoIP\Facades\GeoIP::class,
-        'Agent' => Jenssegers\Agent\Facades\Agent::class,
         'Debugbar' => Barryvdh\Debugbar\Facades\Debugbar::class,
 
         'Batch' => Mavinoo\Batch\BatchFacade::class,

@@ -3,10 +3,10 @@
 use App\Models\Domain;
 use App\Models\IPLIST;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
+
 use \Illuminate\Support\Str;
-use Jenssegers\Agent\Agent;
 use Torann\GeoIP\Facades\GeoIP;
+use hisorange\BrowserDetect\Parser as Browser;
 
 function template($asset = false)
 {
@@ -376,8 +376,8 @@ function createDirectory($path) {
 
 
 function domainLogin($domain,$ip_address){
-    $agent =  new Agent();
     $geoIP =  new GeoIP();
+    $agent = new Browser();
 
     $location = $geoIP::getLocation($ip_address);
     $ip_prefix = getIpPrefix(getIp());
@@ -386,10 +386,10 @@ function domainLogin($domain,$ip_address){
         'domain_id' => $domain->id,
         'ip_address' => $ip_address,
         'ip_prefix' => $ip_prefix,
-        'device_name' => $agent->device(),
-        'browser' => $agent->browser(),
-        'device_name_full' => $agent->getUserAgent(),
-        'platform_name' => $agent->platform() != 0 ? $agent->platform() : 'Other',
+        'device_name' => $agent->deviceType(),
+        'browser' => $agent->browserFamily(),
+        'device_name_full' => $agent->userAgent(),
+        'platform_name' => $agent->platformFamily(),
         'country' => (string) $location['country'],
         'created_at' => Carbon::now()->startOfDay()
     ];
