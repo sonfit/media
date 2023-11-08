@@ -162,8 +162,7 @@ class V2Controller extends Controller
         $page = $get_method['page'] ?? 1;
         $length = 12;
         $limit= ($page-1) * $length ;
-//        $cate_id = $get_method['cat_id'];
-        $cate_id = 2;
+        $cate_id = $get_method['cat_id'];
         $wallpapers = Categories::findOrFail($cate_id)
             ->wallpapers()
             ->with(['categories' => function($query) use ($cate_id) {
