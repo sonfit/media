@@ -199,11 +199,9 @@ class IpblockController extends Controller
         }
         $id = $request->id;
         $ipList = IPLIST::find($id);
-        if($ipList->user->count() > 0){
-            return response()->json(['error'=>'Delete error.']);
-        }else{
-            $ipList->delete();
-            return response()->json(['success'=>'Delete Successfully.']);
-        }
+
+        $ipList->delete();
+        return response()->json(['success'=>'Delete Successfully.']);
+
     }
 }
