@@ -7,8 +7,7 @@ use App\Http\Traits\Upload;
 use App\Models\Domain;
 
 use App\Models\IPLIST;
-use App\Models\Redirect;
-use App\Models\RedirectDetail;
+
 
 use App\Models\User;
 use App\Rules\FileTypeValidate;
@@ -138,7 +137,7 @@ class DashboardController extends Controller
 
     public function profile()
     {
-        $admin = $this->user;
+        $admin = Auth::user();
         return view('admin.profile', compact('admin'));
     }
 
@@ -149,8 +148,8 @@ class DashboardController extends Controller
         $req = Purify::clean($request->except('_token', '_method'));
         $rules = [
             'name' => 'sometimes|required',
-            'username' => 'sometimes|required|unique:admins,username,' . $this->user->id,
-            'email' => 'sometimes|required|email|unique:admins,email,' . $this->user->id,
+            'username' => 'sometimes|required|unique:admins,username,' .  Auth::user()->id,
+            'email' => 'sometimes|required|email|unique:admins,email,' .  Auth::user()->id,
             'phone' => 'sometimes|required',
             'address' => 'sometimes|required',
             'image' => ['nullable', 'image', new FileTypeValidate(['jpeg', 'jpg', 'png'])]
@@ -159,7 +158,7 @@ class DashboardController extends Controller
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
-        $user = $this->user;
+        $user =  Auth::user();
         if ($request->hasFile('image')) {
             try {
                 $old = $user->image ?: null;

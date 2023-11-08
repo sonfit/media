@@ -113,18 +113,25 @@ class WallpapersController extends Controller
 
     private function processImage($file, $path_origin, $path_thumbnails, $filename) {
         $img = Image::make($file);
-        $thumb = Image::make($file);
-        if ($img->width() == $img->height()) {
-            $type = 'Square';
-            $dimensions = [1300, 1300, 360, 360];
-        } elseif ($img->width() > $img->height()) {
-            $type = 'Landscape';
-            $dimensions = [2400, 1300, 640, 360];
-        } else {
-            $type = 'Portrait';
-            $dimensions = [1300, 2400 , 360, 640];
+        if($img->mime() !== 'image/gif'){
+            $thumb = Image::make($file);
+            if ($img->width() == $img->height()) {
+                $type = 'Square';
+                $dimensions = [1300, 1300, 360, 360];
+            } elseif ($img->width() > $img->height()) {
+                $type = 'Landscape';
+                $dimensions = [2400, 1300, 640, 360];
+            } else {
+                $type = 'Portrait';
+                $dimensions = [1300, 2400 , 360, 640];
+            }
+            return [$this->resizeImage($img, $thumb, $path_origin, $path_thumbnails, $filename, $dimensions), $type, $img->mime()];
+        }else{
+            copy($file->getRealPath(), $path_origin.$filename);
+            copy($file->getRealPath(), $path_thumbnails.$filename);
+            return [$file, 'Square', $img->mime()];
         }
-        return [$this->resizeImage($img, $thumb, $path_origin, $path_thumbnails, $filename, $dimensions), $type, $img->mime() ?? $file->getClientOriginalExtension()];
+
     }
 
     private function resizeImage($img, $thumb, $path_origin, $path_thumbnails, $filename, $dimensions) {

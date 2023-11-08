@@ -15,14 +15,14 @@
                 @endcan
 
 
-{{--                @can('admin.staff')--}}
+                @can('admin.staff')
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="{{route('admin.staff')}}" aria-expanded="false">
                         <i data-feather="users" class="feather-icon text-primary"></i>
                         <span class="hide-menu">@lang('Role Permission')</span>
                     </a>
                 </li>
-{{--                @endcan--}}
+                @endcan
 
                 <li class="nav-small-cap"><span class="hide-menu">@lang('Manage')</span></li>
                 @can('admin.ipblock')

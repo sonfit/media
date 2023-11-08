@@ -39,7 +39,6 @@ class V0Controller extends Controller
             ->skip($limit)
             ->take($length)
             ->get();
-//            ->paginate($length, ['*'], 'page', $page);
         return WallpapersResource::collection($wallpapers);
     }
 
@@ -67,8 +66,6 @@ class V0Controller extends Controller
             ->skip($limit)
             ->take($length)
             ->get();
-//        ->paginate($length, ['*'], 'page', $page);
-
     }
 
     public function getFeatured(){
