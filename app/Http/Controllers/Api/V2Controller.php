@@ -146,6 +146,7 @@ class V2Controller extends Controller
         $domain = getDomain();
         $query = $domain
             ->getWallpaper($isBlock)
+            ->where('image_extension', '<>', 'image/gif')
             ->where('wallpaper_type',$get_method['type'])
             ->where('wallpaper_status',1);
         if ($random) {
@@ -154,13 +155,14 @@ class V2Controller extends Controller
             $query = $query->orderByDesc($orderBy);
         }
         $limit= ($page-1) * $length ;
-        return $query->skip($limit)->take($length)->get();
+        return $query->paginate($length, ['*'], 'page', $page);
+//            ->skip($limit)->take($length)->get();
     }
 
     public function get_wallpaperByCategories($get_method){
         $type = trim($get_method['type']);
         $page = $get_method['page'] ?? 1;
-        $length = 12;
+        $length = 20;
         $limit= ($page-1) * $length ;
         $cate_id = $get_method['cat_id'];
         $wallpapers = Categories::findOrFail($cate_id)
@@ -168,13 +170,15 @@ class V2Controller extends Controller
             ->with(['categories' => function($query) use ($cate_id) {
                 $query->where('categories.id',$cate_id);
             }])
+            ->where('image_extension', '<>', 'image/gif')
             ->where('wallpaper_status',1)
             ->where('wallpaper_type',$type)
             ->distinct()
             ->inRandomOrder()
-            ->skip($limit)
-            ->take($length)
-            ->get();
+            ->paginate($length, ['*'], 'page', $page);
+//            ->skip($limit)
+//            ->take($length)
+//            ->get();
         return WallpapersResource::collection($wallpapers);
     }
 
