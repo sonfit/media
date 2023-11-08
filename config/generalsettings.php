@@ -68,5 +68,10 @@ return [
             'icon' => 'fas fa-music',
             'short_description' => 'Musics',
         ],
+        'logs' => [
+            'route' => 'admin.domain.logs',
+            'icon' => 'fas fa-sticky-note',
+            'short_description' => 'Logs',
+        ],
     ],
 ];

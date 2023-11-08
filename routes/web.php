@@ -131,6 +131,10 @@ Route::middleware(['checkAppUrl'])->group(function () {
                 Route::get('{id}/musics', [DomainController::class, 'musics'])->name('.musics');
                 Route::post('{id}/get-musics', [DomainController::class, 'getDomainMusics'])->name('.getDomainMusics');
 
+                //Logs
+                Route::get('{id}/logs', [DomainController::class, 'logs'])->name('.logs');
+                Route::post('{id}/get-logs', [DomainController::class, 'getDomainLogs'])->name('.getDomainLogs');
+
             });
 
             Route::group(['prefix' => 'wallpapers', 'as' => 'wallpapers'], function () {

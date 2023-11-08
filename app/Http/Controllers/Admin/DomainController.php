@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Categories;
 use App\Models\Domain;
+use App\Models\DomainLoginLogs;
 use App\Models\Wallpapers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -604,7 +605,6 @@ class DomainController extends Controller
 
     //============================= MUSICS =============================
 
-
     public function musics($id)
     {
         if(!Auth::user()->can('admin.domain')){
@@ -671,6 +671,85 @@ class DomainController extends Controller
                 "music_url" => '<audio class="playback" src='.$record->music_url.'  controls="controls" preload="none"></audio>',
                 "music_tags" => $tags,
                 "action"=> $btn,
+            );
+        }
+
+        $response = array(
+            "draw" => intval($draw),
+            "iTotalRecords" => $totalRecords,
+            "iTotalDisplayRecords" => $totalRecordswithFilter,
+            "aaData" => $data_arr,
+        );
+
+        return json_encode($response);
+    }
+
+    //============================= LOGS =============================
+
+    public function logs($id)
+    {
+        if(!Auth::user()->can('admin.domain')){
+            abort(403);
+        }
+        $domain_id = $id;
+        $title = 'Logs';
+        $domain = Domain::find($domain_id);
+        return view('admin.domain.logs', compact('domain','domain_id','title'));
+    }
+
+    public function getDomainLogs(Request $request,$id)
+    {
+        if(!Auth::user()->can('admin.domain')){
+            return response()->json([
+                'error'=> 'Tài khoản không có quyền.',
+            ]);
+        }
+        $draw = $request->input('draw');
+        $rowperpage = $request->input('length');
+        $page = $request->input('page');
+
+        $columnIndex = $request->input('order')[0]['column'];
+        $columnName = $request->input('columns')[$columnIndex]['data'];
+        $columnSortOrder = $request->input('order')[0]['dir'];
+        $searchValue = $request->input('search')['value'];
+
+//        $domainLogs = Domain::find($id);
+
+        $domainLogsQuery = DomainLoginLogs::query();
+        $domainLogsQuery->where('domain_id',$id)
+            ->when(isset($searchValue), function ($query) use ($searchValue) {
+                $searchTerm = '%' . $searchValue . '%';
+                $query->where('ip_address', 'like', $searchTerm)
+                    ->orwhere('device_name', 'like', $searchTerm)
+                    ->orwhere('platform_name', 'like', $searchTerm)
+                    ->orwhere('country', 'like', $searchTerm)
+                    ->orwhere('browser', 'like', $searchTerm);
+            });
+
+        $totalRecordswithFilter = $domainLogsQuery->count();
+
+        $records = $domainLogsQuery
+            ->orderBy($columnName, $columnSortOrder)
+            ->paginate($rowperpage, ['*'], 'page', $page);
+
+        if (!isset($searchValue)) {
+            $totalRecords = $totalRecordswithFilter;
+        } else {
+            $totalRecords = $domainLogsQuery->count();
+        }
+
+
+        $data_arr = array();
+        foreach ($records as $record) {
+
+
+            $data_arr[] = array(
+                "id" => $record->id,
+                "ip_address" => $record->ip_address,
+                "device_name" => $record->device_name,
+                "platform_name" => $record->platform_name,
+                "country" => $record->country,
+                "count" => $record->count,
             );
         }
 
