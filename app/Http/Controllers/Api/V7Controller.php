@@ -71,7 +71,7 @@ class V7Controller extends Controller
         ];
 
         $servers = [
-            array_merge($defaultServer, ["server_status<" => route('v8.status')])
+            array_merge($defaultServer, ["server_status<" => route('v7.status')])
         ];
 
         $data = [
