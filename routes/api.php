@@ -124,8 +124,8 @@ Route::group([
     Route::post('wallpaper_view_count',[V9Controller::class, 'wallpaper_view_count']);
 
     Route::get('get_img_search',[V9Controller::class, 'get_img_search']);
-    Route::get('get_ringtone_search',[V9Controller::class, 'get_ringtone_search']);
 
+    Route::get('get_ringtone_search',[V9Controller::class, 'get_ringtone_search']);
     Route::get('get_ringtone_List',[V9Controller::class, 'get_ringtone_List']);
     Route::get('get_home_ringtone_List',[V9Controller::class, 'get_home_ringtone_List']);
     Route::get('get_featured_ringtone_cat',[V9Controller::class, 'get_featured_ringtone_cat']);
