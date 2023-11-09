@@ -19,7 +19,7 @@ class WallpapersResource extends JsonResource
             'wall_name' => $this->wallpaper_name,
             'category_name' => $this->categories()->first()->category_name,
             'category_id' => $this->categories()->first()->id,
-            'image' => 'originals/'.$this->wallpaper_image,
+            'image' => $this->wallpaper_image,
             'image_name' => $this->wallpaper_name,
             'download' => $this->wallpaper_download_count,
             'status' => 1,
