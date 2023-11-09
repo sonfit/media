@@ -67,7 +67,31 @@ class Domain extends Model
 
     public function ringtones()
     {
-        return $this->hasManyDeepFromRelations($this->tags(), (new Tags)->ringtones())->distinct();
+        return $this->hasManyDeepFromRelations($this->tags(), (new Tags)->ringtones())
+            ->with(['tags' => function ($query) {
+                $tagIds = $this->tags()->pluck('tags.id');
+                $query->whereIn('tags.id', $tagIds);
+            }])->distinct();
+    }
+    public function getRingtone($isBlock){
+        return $this->ringtones()
+            ->whereHas('categories', function($query) use ($isBlock) {
+                $query->where([
+                    ['category_checked_ip', '=', $isBlock],
+                    ['domain_id', '=', $this->id]
+                ]);
+            })
+            ->with([
+                'categories' => function($query) use ($isBlock) {
+                    $query->where([
+                        ['category_checked_ip', '=', $isBlock],
+                        ['domain_id', '=', $this->id]
+                    ]);
+                },
+                'tags' => function ($query) use ($isBlock) {
+                    $tagIds = $this->categories()->where('category_checked_ip', $isBlock)->first()->tags()->pluck('tags.id');
+                    $query->whereIn('tags.id', $tagIds);
+                }]);
     }
 
     public function musics()

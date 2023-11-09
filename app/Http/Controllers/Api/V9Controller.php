@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V9\CategoriesResource;
 use App\Http\Resources\V9\gifWallpapersResource;
+use App\Http\Resources\v9\RingtonesResource;
 use App\Http\Resources\V9\WallpapersResource;
 use App\Models\Categories;
 use App\Models\Wallpapers;
@@ -279,6 +280,24 @@ class V9Controller extends Controller
         $this->response($this->json($set), 200);
     }
 
+    public function get_ringtone_search(){
+        $search = '%' .$_GET['search_value'].'%' ;
+        $page =  $_GET['page'] ?? 1;
+        $length = 10;
+        $domain = getDomain();
+        $isBlock = checkBlockIp() ? 0 : 1;
+        $data = $domain
+            ->getRingtone($isBlock)
+            ->where('ringtone_name','like',$search)
+            ->paginate($length, ['*'], 'page', $page);
+        $getResource = RingtonesResource::collection($data);
+        $set['page'] = $page;
+        $set['totalimage'] = $data->total();
+        $set['limit'] = '10';
+        $set['success'] = '1';
+        $set['video-status-image'] = $getResource;
+        $this->response($this->json($set), 200);
+    }
 
 
 
