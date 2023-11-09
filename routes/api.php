@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V0Controller;
 use App\Http\Controllers\Api\V2Controller;
 use App\Http\Controllers\Api\V4Controller;
+use App\Http\Controllers\Api\V7Controller;
 use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -73,7 +74,6 @@ Route::group([
 
 Route::group([
     "prefix" => "v4",
-//    'middleware' => 'auth.apikey'
 ], function() {
     Route::get('admob',[V4Controller::class, 'admob']);
     Route::get('settings',[V4Controller::class, 'settings']);
@@ -89,4 +89,16 @@ Route::group([
     Route::get('wallpaper/hashtag',[V4Controller::class, 'hashtag']);
     Route::get('add/show/wallpaper',[V4Controller::class, 'viewWallpaper']);
 });
+
+Route::group([
+    "prefix" => "v7",
+], function() {
+    Route::get('getJson',[V7Controller::class, 'getJson']);
+    Route::get('getJsonV8',[V7Controller::class, 'getJsonV8']);
+    Route::get('status',[V7Controller::class, 'status'])->name('v7.status');
+    Route::get('categories',[V7Controller::class, 'categories']);
+    Route::get('action',[V7Controller::class, 'action']);
+});
+Route::get('wallpaper/{id}',[V7Controller::class, 'showWallpaper']);
+Route::get('wallpaperThumb/{id}',[V7Controller::class, 'showWallpaperThumb']);
 
