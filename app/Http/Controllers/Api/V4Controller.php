@@ -177,9 +177,10 @@ class V4Controller extends Controller
     }
 
     public function viewWallpaper(Request $request){
-        $data = Wallpapers::with('tags')->findOrFail($request['id']);
-        $data->increment('wallpaper_view_count');
-        return New WallpapersResource($data);
+        $domain = getDomain();
+        $wallpaper = $domain->wallpapers()->findOrFail($request['id']);
+        $wallpaper->increment('wallpaper_view_count');
+        return New WallpapersResource($wallpaper);
     }
 
     public function hashtag(Request $request){
