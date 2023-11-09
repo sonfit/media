@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V0Controller;
 use App\Http\Controllers\Api\V2Controller;
+use App\Http\Controllers\Api\V4Controller;
 use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -68,5 +69,24 @@ Route::group([
     "prefix" => "v2"
 ], function() {
     Route::post('/getData',[V2Controller::class, 'getData']);
+});
+
+Route::group([
+    "prefix" => "v4",
+//    'middleware' => 'auth.apikey'
+], function() {
+    Route::get('admob',[V4Controller::class, 'admob']);
+    Route::get('settings',[V4Controller::class, 'settings']);
+    Route::get('home',[V4Controller::class, 'home']);
+    Route::get('categories',[V4Controller::class, 'categories']);
+
+    Route::get('wallpaper',[V4Controller::class, 'wallpaper']);
+    Route::get('wallpaper/popular',[V4Controller::class, 'popular']);
+    Route::get('wallpaper/download',[V4Controller::class, 'download']);
+    Route::get('wallpaper/random',[V4Controller::class, 'random']);
+    Route::get('wallpaper/live',[V4Controller::class, 'live']);
+    Route::get('wallpaper/cid',[V4Controller::class, 'cid']);
+    Route::get('wallpaper/hashtag',[V4Controller::class, 'hashtag']);
+    Route::get('add/show/wallpaper',[V4Controller::class, 'viewWallpaper']);
 });
 

@@ -33,7 +33,9 @@ class Categories extends Model
             [CategoryTag::class, WallpaperTag::class],
             ['category_id','tag_id','id'],
             ['id','tag_id','wallpaper_id']
-        )->distinct();
+        )->with(['categories' => function($query) {
+            $query->where('categories.id', $this->id);
+        }])->distinct();
     }
 
     public function ringtones()

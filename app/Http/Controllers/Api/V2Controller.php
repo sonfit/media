@@ -167,18 +167,12 @@ class V2Controller extends Controller
         $cate_id = $get_method['cat_id'];
         $wallpapers = Categories::findOrFail($cate_id)
             ->wallpapers()
-            ->with(['categories' => function($query) use ($cate_id) {
-                $query->where('categories.id',$cate_id);
-            }])
             ->where('wallpaper_extension', '<>', 'image/gif')
             ->where('wallpaper_status',1)
             ->where('wallpaper_type',$type)
             ->distinct()
             ->inRandomOrder()
             ->paginate($length, ['*'], 'page', $page);
-//            ->skip($limit)
-//            ->take($length)
-//            ->get();
         return WallpapersResource::collection($wallpapers);
     }
 

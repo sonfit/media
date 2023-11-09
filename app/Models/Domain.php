@@ -12,6 +12,11 @@ class Domain extends Model
     use HasFactory, HasRelationships;
 
 
+    public function iplist()
+    {
+        return $this->hasMany(DomainLoginLogs::class,'domain_id');
+    }
+
     public function categories()
     {
         return $this->hasMany(Categories::class,'domain_id');
@@ -27,18 +32,21 @@ class Domain extends Model
         )->distinct();
     }
 
-
-    public function iplist()
-    {
-        return $this->hasMany(DomainLoginLogs::class,'domain_id');
-    }
-
-
     //================== WALLPAPERS ============
+
+    public function wallpapers1()
+    {
+        return $this->hasManyDeepFromRelations($this->tags(), (new Tags)->wallpapers())->distinct();
+    }
 
     public function wallpapers()
     {
-        return $this->hasManyDeepFromRelations($this->tags(), (new Tags)->wallpapers())->distinct();
+        return $this->hasManyDeepFromRelations($this->tags(), (new Tags)->wallpapers())
+            ->with(['tags' => function ($query) {
+                $tagIds = $this->tags()->pluck('tags.id');
+                $query->whereIn('tags.id', $tagIds);
+            }])
+            ->distinct();
     }
 
     public function getWallpaper($isBlock){
@@ -54,26 +62,9 @@ class Domain extends Model
                     ['category_checked_ip', '=', $isBlock],
                     ['domain_id', '=', $this->id]
                 ]);
-            }]);
+            }])
+            ->distinct();
     }
-
-
-
-
-    public function getWallpape1r($isBlock){
-        return $this->wallpapers()
-            ->whereHas('categories', function($query) use ($isBlock) {
-                $query->where('category_checked_ip', $isBlock)
-                    ->where('domain_id', $this->id);
-            })
-            ->with(['categories' => function($query) use ($isBlock) {
-                $query->where('category_checked_ip', $isBlock)
-                    ->where('domain_id', $this->id);
-            }]);
-    }
-
-
-
 
     public function ringtones()
     {

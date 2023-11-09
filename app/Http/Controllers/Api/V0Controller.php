@@ -31,9 +31,6 @@ class V0Controller extends Controller
         $limit= ($page-1) * $length ;
         $wallpapers = Categories::findOrFail($id)
             ->wallpapers()
-            ->with(['categories' => function($query) use ($id) {
-                $query->where('categories.id', $id);
-            }])
             ->where('wallpaper_extension','image/jpeg')
             ->where('wallpaper_status',1)
             ->distinct()

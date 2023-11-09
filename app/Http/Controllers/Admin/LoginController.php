@@ -11,8 +11,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
-use Jenssegers\Agent\Agent;
+use hisorange\BrowserDetect\Parser as Browser;
 use Torann\GeoIP\Facades\GeoIP;
 
 class LoginController extends Controller
@@ -118,7 +117,7 @@ class LoginController extends Controller
         $user->last_login_ip = getIp();
         $user->save();
 
-        $agent = new Agent();
+        $agent = new Browser();
         $geoIP = new GeoIP;
         $location = $geoIP::getLocation(getIp());
 
@@ -130,8 +129,8 @@ class LoginController extends Controller
         $ul['country_code'] = $location['iso_code']?? null;
         $ul['latitude'] = $location['lat']?? null;
         $ul['longitude'] = $location['lon']?? null;
-        $ul['os'] = $agent->platform();
-        $ul['browser'] = $agent->browser();
+        $ul['os'] = $agent->platformFamily();
+        $ul['browser'] = $agent->browserFamily();
 
         AdminLoginLog::create($ul);
 

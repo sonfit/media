@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Http\Resources\V4;
+
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class WallpapersResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
+     */
+    public function toArray($request)
+    {
+        $tags = [];
+        foreach ($this->tags as $tag){
+            $tags[] = $tag->tag_name;
+        }
+        return [
+            'id' =>$this->id,
+            'image' => asset('storage/wallpapers/originals/'.$this->wallpaper_image),
+            'type' =>$this->wallpaper_extension != 'image/gif' ? 'IMAGE' : 'GIF'  ,
+            'premium' => 0,
+            'tags' => implode(",", $tags),
+            'view' =>$this->wallpaper_view_count,
+            'download' =>$this->wallpaper_download_count,
+            'like' =>$this->wallpaper_like_count,
+        ];
+    }
+}
