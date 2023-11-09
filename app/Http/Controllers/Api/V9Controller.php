@@ -8,6 +8,7 @@ use App\Http\Resources\V9\gifWallpapersResource;
 use App\Http\Resources\v9\RingtonesResource;
 use App\Http\Resources\V9\WallpapersResource;
 use App\Models\Categories;
+use App\Models\Ringtones;
 use App\Models\Wallpapers;
 use Illuminate\Http\Request;
 
@@ -297,6 +298,75 @@ class V9Controller extends Controller
         $set['success'] = '1';
         $set['video-status-image'] = $getResource;
         $this->response($this->json($set), 200);
+    }
+
+    private function getRingtonesByCriteria($isBlock, $orderBy,  $random = false, $page = 1, $length = 10) {
+        $domain = getDomain();
+        $query = $domain
+            ->getRingtone($isBlock);
+        if ($random) {
+            $query = $query->inRandomOrder();
+        } else {
+            $query = $query->orderByDesc($orderBy);
+        }
+        return $query->paginate($length, ['*'], 'page', $page);
+    }
+
+    public function get_ringtone_List(){
+        $page =  $_GET['page'] ?? 1;
+        $wallpapers = RingtonesResource::collection($this->getRingtonesByCriteria(checkBlockIp() ? 0 : 1, 'id',true,$page));
+        $dataResult['page'] = $page;
+        $dataResult['limit'] = 10;
+        $dataResult['totalringtone'] = $wallpapers->total();
+        $dataResult['success'] = 1;
+        $dataResult['video-status-image'] = $wallpapers;
+        $this->response($this->json($dataResult), 200);
+    }
+
+    public function get_home_ringtone_List(){
+        $page =  $_GET['page'] ?? 1;
+        $wallpapers = RingtonesResource::collection($this->getRingtonesByCriteria(checkBlockIp() ? 0 : 1, 'id',true,$page));
+        $dataResult['page'] = $page;
+        $dataResult['limit'] = 10;
+        $dataResult['totalringtone'] = $wallpapers->total();
+        $dataResult['success'] = 1;
+        $dataResult['video-status-image'] = $wallpapers;
+        $this->response($this->json($dataResult), 200);
+    }
+    public function get_featured_ringtone_cat(){
+        $page =  $_GET['page'] ?? 1;
+        $wallpapers = RingtonesResource::collection($this->getRingtonesByCriteria(checkBlockIp() ? 0 : 1, 'id',true,$page));
+        $dataResult['page'] = $page;
+        $dataResult['limit'] = 10;
+        $dataResult['totalringtone'] = $wallpapers->total();
+        $dataResult['success'] = 1;
+        $dataResult['video-status-image'] = $wallpapers;
+        $this->response($this->json($dataResult), 200);
+    }
+
+    public function get_ringtone_cat(){
+        $page =  $_GET['page'] ?? 1;
+        $wallpapers = RingtonesResource::collection($this->getRingtonesByCriteria(checkBlockIp() ? 0 : 1, 'id',true,$page));
+        $dataResult['page'] = $page;
+        $dataResult['limit'] = 10;
+        $dataResult['totalringtone'] = $wallpapers->total();
+        $dataResult['success'] = 1;
+        $dataResult['video-status-image'] = $wallpapers;
+        $this->response($this->json($dataResult), 200);
+    }
+
+
+    public function ringtone_download_count() {
+        $ringtone_id = $_POST['ringtone_id'];
+        $ringtone = Ringtones::find($ringtone_id);
+        if ($ringtone) {
+            $ringtone->increment('ringtone_download_count');
+            $set['video-status-image'] = array( 'success' => '1', 'message' => 'wallpaper downloads count updated');
+            $this->response($this->json($set), 200);
+        } else {
+            $respon = array( 'success' => 'failed', '0' => 'Oops, API Key is Incorrect!');
+            $this->response($this->json($respon), 404);
+        }
     }
 
 
