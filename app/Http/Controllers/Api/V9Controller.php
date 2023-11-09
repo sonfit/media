@@ -109,7 +109,7 @@ class V9Controller extends Controller
         $jsonObj['app_description'] = '';
         $jsonObj['app_privacy_policy'] = '';
 
-        $jsonObj['ads'] = $domain->is_ads ;
+        $jsonObj['ads'] = $domain->is_ads == 1 ;
         $jsonObj['click'] = 20;
         $jsonObj['publisher_id'] = ($ads && $ads['app_id']) ? $ads['app_id'] :  null;
         $jsonObj['interstital_ad_id'] = ($ads && $ads['interstitial_ads_id']) ? $ads['interstitial_ads_id'] :  'ca-app-pub-3940256099942544/1033173712';
