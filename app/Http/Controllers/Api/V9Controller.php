@@ -215,7 +215,6 @@ class V9Controller extends Controller
         $cate_id = $_GET['cat_id'];
         $page = $_GET['page'] ?? 1;
         $length = 20;
-        $limit= ($page-1) * $length ;
         $category = Categories::findOrFail($cate_id);
         $category->increment('category_view_count');
         $wallpapers = $category
@@ -314,13 +313,22 @@ class V9Controller extends Controller
     }
 
     public function get_ringtone_List(){
-        $page =  $_GET['page'] ?? 1;
-        $wallpapers = RingtonesResource::collection($this->getRingtonesByCriteria(checkBlockIp() ? 0 : 1, 'id',true,$page));
+        $cate_id = $_GET['cat_id'];
+        $page = $_GET['page'] ?? 1;
+        $length = 20;
+        $category = Categories::findOrFail($cate_id);
+        $category->increment('category_view_count');
+        $ringtones = $category
+            ->ringtones()
+            ->distinct()
+            ->inRandomOrder()
+            ->paginate($length, ['*'], 'page', $page);
+
         $dataResult['page'] = $page;
         $dataResult['limit'] = 10;
-        $dataResult['totalringtone'] = $wallpapers->total();
+        $dataResult['totalringtone'] = $ringtones->total();
         $dataResult['success'] = 1;
-        $dataResult['video-status-image'] = $wallpapers;
+        $dataResult['video-status-image'] = WallpapersResource::collection($ringtones);
         $this->response($this->json($dataResult), 200);
     }
 
@@ -335,14 +343,7 @@ class V9Controller extends Controller
         $this->response($this->json($dataResult), 200);
     }
     public function get_featured_ringtone_cat(){
-        $page =  $_GET['page'] ?? 1;
-        $wallpapers = RingtonesResource::collection($this->getRingtonesByCriteria(checkBlockIp() ? 0 : 1, 'id',true,$page));
-        $dataResult['page'] = $page;
-        $dataResult['limit'] = 10;
-        $dataResult['totalringtone'] = $wallpapers->total();
-        $dataResult['success'] = 1;
-        $dataResult['video-status-image'] = $wallpapers;
-        $this->response($this->json($dataResult), 200);
+        return $this->get_ringtone_cate();
     }
 
     public function get_ringtone_cat(){
