@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V9\CategoriesResource;
 use App\Http\Resources\V9\gifWallpapersResource;
+use App\Http\Resources\V9\RingtonesCategoriesResource;
 use App\Http\Resources\v9\RingtonesResource;
 use App\Http\Resources\V9\WallpapersResource;
 use App\Models\Categories;
@@ -345,14 +346,17 @@ class V9Controller extends Controller
     }
 
     public function get_ringtone_cat(){
-        $page =  $_GET['page'] ?? 1;
-        $wallpapers = RingtonesResource::collection($this->getRingtonesByCriteria(checkBlockIp() ? 0 : 1, 'id',true,$page));
-        $dataResult['page'] = $page;
-        $dataResult['limit'] = 10;
-        $dataResult['totalringtone'] = $wallpapers->total();
-        $dataResult['success'] = 1;
-        $dataResult['video-status-image'] = $wallpapers;
-        $this->response($this->json($dataResult), 200);
+        $domain = getDomain();
+        $isBlock = checkBlockIp() ? 0 : 1;
+        $categories =  $domain->categories()
+            ->where('category_checked_ip',$isBlock)
+            ->withCount('ringtones')
+            ->having('ringtones_count', '>', 0)
+            ->inRandomOrder()
+            ->paginate(5);
+        $getResource= RingtonesCategoriesResource::collection($categories);
+        $set['video-status-image'] = $getResource;
+        $this->response($this->json($set), 200);
     }
 
 
