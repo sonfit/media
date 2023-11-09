@@ -17,7 +17,7 @@ class gifWallpapersResource extends JsonResource
         return [
             'id' => $this->id,
             'gif_name' => $this->wallpaper_name,
-            'gif' => 'wallpapers/originals/'.$this->wallpaper_image,
+            'gif' => 'storage/wallpapers/originals/'.$this->wallpaper_image,
             'download' => $this->wallpaper_download_count,
             'status' => 1,
         ];
