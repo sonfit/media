@@ -183,22 +183,28 @@ class V4Controller extends Controller
     }
 
     public function hashtag(Request $request){
-        $page = $_GET['page'] ?? 1;
+        $page = $request->get('page', 1);
         $length = 20;
         $tagName = '%'.$request['query'].'%';
         $domain = getDomain();
-        $wallpapers = $domain->wallpapers()->whereHas('tags', function ($query) use ($tagName) {
-            $query->where('tag_name', 'like',$tagName);
+        $wallpapers = $domain->wallpapers()
+            ->whereHas('tags', function ($query) use ($tagName) {
+                $query->where('tag_name', 'like',$tagName);
             })
-            ->where('wallpaper_status',1)
+            ->whereHas('categories', function ($query) {
+                $query->where('category_checked_ip', checkBlockIp() ? 0 : 1);
+            })
+            ->where('wallpaper_status', 1)
             ->distinct()
             ->inRandomOrder()
             ->paginate($length, ['*'], 'page', $page);
-        $dataResult['current_page'] = $wallpapers->currentPage();
-        $dataResult['last_page'] = $wallpapers->lastPage();
-        $dataResult['total'] = $wallpapers->total();
-        $dataResult['data'] = WallpapersResource::collection($wallpapers);
-        return $dataResult;
 
+        return [
+            'current_page' => $wallpapers->currentPage(),
+            'last_page' => $wallpapers->lastPage(),
+            'total' => $wallpapers->total(),
+            'data' => WallpapersResource::collection($wallpapers),
+        ];
     }
+
 }
