@@ -29,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        URL::forceScheme('https');
+//        URL::forceScheme('https');
 
         $data['basic'] = (object) config('basic');
         $data['theme'] = template();

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\V4\CategoriesResource;
 use App\Http\Resources\V4\WallpapersResource;
 use App\Models\Categories;
-use App\Models\Wallpapers;
 use Illuminate\Http\Request;
 
 class V4Controller extends Controller
@@ -34,6 +33,7 @@ class V4Controller extends Controller
             'open_enable' => $domain->is_ads,
         ];
     }
+
     public function settings(){
 
         $settings = [
@@ -83,7 +83,6 @@ class V4Controller extends Controller
         }
         return $row;
     }
-
 
     private function getWallpapersByCriteria($isBlock, $orderBy, $operator, $random = false, $page = 1, $length = 10) {
         $domain = getDomain();
@@ -150,6 +149,7 @@ class V4Controller extends Controller
         $dataResult['data'] = $wallpapers;
         return $dataResult;
     }
+
     public function live(){
         $wallpapers = WallpapersResource::collection($this->getWallpapersByCriteria(checkBlockIp() ? 0 : 1, 'id','=',true));
         $dataResult['current_page'] = $wallpapers->currentPage();
