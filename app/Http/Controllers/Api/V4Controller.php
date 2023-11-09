@@ -76,7 +76,10 @@ class V4Controller extends Controller
         ];
         $row = [];
         foreach ($criteria as $key => $value) {
-            $row[][$key] = WallpapersResource::collection($this->getWallpapersByCriteria($isBlock, ...$value));
+            $row[] = [
+                'name' => $key,
+                'data' => WallpapersResource::collection($this->getWallpapersByCriteria($isBlock, ...$value)),
+            ];
         }
         return $row;
     }
