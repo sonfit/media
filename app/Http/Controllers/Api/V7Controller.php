@@ -62,7 +62,7 @@ class V7Controller extends Controller
 
         $defaultServer = [
             'adres' => $basic['domainWeb'],
-            'images_big' => $basic['wallpaperUrl'].'/[ID]',
+            'images_big' => $basic['wallpaperThumbUrl'].'/[ID]',
             'images_set_wallpapers' => $basic['wallpaperUrl'].'/[ID]',
             'images_pobierz' => $basic['wallpaperThumbUrl'].'/[ID]',
             "img_share" => $basic['wallpaperUrl'].'/[ID]',
