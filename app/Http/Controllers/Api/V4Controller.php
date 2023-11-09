@@ -35,13 +35,31 @@ class V4Controller extends Controller
         ];
     }
     public function settings(){
-
         $settings = [
-
+            "onesignal_id"=> "",
+            "onesignal_rest"=> "",
+            "packagename"=> "",
+            "privacy"=> "https://google.com",
+            "layout"=> "dark-layout",
+            "server_key"=> "",
+            "wallpaper_columns"=> "3",
+            "show_view_count"=> "false",
+            "show_categories"=> "true",
+            "setting_icon"=> "",
+            "home_icon"=> "",
+            "categories_icon"=> "",
+            "popular_icon"=> "",
+            "favourite_icon"=> "",
+            "back_icon"=> "",
+            "download_icon"=> "",
+            "set_wallpaper_icon"=> "",
+            "favourite_enable_icon"=> "",
+            "favourite_disable_icon"=> "",
+            "background_color"=> "#191B21",
+            "header_color"=> "#0F1013",
+            "filter_icon"=> ""
         ];
-
         return json_encode($settings);
-
     }
 
     public function home(){
