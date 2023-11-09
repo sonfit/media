@@ -29,7 +29,9 @@ class V0Controller extends Controller
         $page = $_GET['page'] ?? 1;
         $length = 20;
         $limit= ($page-1) * $length ;
-        $wallpapers = Categories::findOrFail($id)
+        $category = Categories::findOrFail($id);
+        $category->increment('category_view_count');
+        $wallpapers = $category
             ->wallpapers()
             ->where('wallpaper_extension','image/jpeg')
             ->where('wallpaper_status',1)
