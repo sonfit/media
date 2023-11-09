@@ -177,7 +177,8 @@ class V2Controller extends Controller
     }
 
     private function get_single_wallpaper($get_method){
-        $wallpaper = Wallpapers::findOrFail($get_method['wallpaper_id']);
+        $wallpaper_id = $get_method['wallpaper_id'];
+        $wallpaper = Wallpapers::findOrFail($wallpaper_id);
         $wallpaper->wallpaper_view_count = $wallpaper->wallpaper_view_count + 1;
         $wallpaper->save();
         return new WallpapersResource($wallpaper);

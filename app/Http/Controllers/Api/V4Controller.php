@@ -37,28 +37,28 @@ class V4Controller extends Controller
     public function settings(){
 
         $settings = [
-            "onesignal_id"=> "01f96de5-e775-43a8-b9d0-91a720d65912",
-            "onesignal_rest"=> "NmMyOGNmNzQtNWM4MC00MjgxLWJiOTEtNTljNjA0YmI3YjA4",
-            "packagename"=> "https://play.google.com/store/apps/dev?id=5703447331110116266",
-            "privacy"=> "https://google.com",
+            "onesignal_id"=> "",
+            "onesignal_rest"=> "",
+            "packagename"=> "",
+            "privacy"=> "",
             "layout"=> "dark-layout",
-            "server_key"=> "XjjXvKKAxjYmJjjOdFSKdAOlZwTkvlQrXRShNQlIzRedUzPifp",
+            "server_key"=> "",
             "wallpaper_columns"=> "3",
             "show_view_count"=> "false",
             "show_categories"=> "true",
-            "setting_icon"=> "icon/1649458789_06bbb5ee95a644288cdb.png",
-            "home_icon"=> "icon/1649681235_555f82c4bc2ec4b64eb2.png",
-            "categories_icon"=> "icon/1649681235_e2fb6d0d3a9eb20749cc.png",
-            "popular_icon"=> "icon/1649681235_e232efe0fe4cbcc039ad.png",
-            "favourite_icon"=> "icon/1649681235_dd3df73bc9e08ec4e699.png",
-            "back_icon"=> "icon/1649648137_4f61c645b41a456a3460.png",
-            "download_icon"=> "icon/1649648137_02f2c6b2aa2168c0dc85.png",
-            "set_wallpaper_icon"=> "icon/1649680653_5e6fb36cd6418c1f575e.png",
-            "favourite_enable_icon"=> "icon/1649648137_09fd2adad5969e30aea6.png",
-            "favourite_disable_icon"=> "icon/1649648137_41d6e7c4b84867caff64.png",
+            "setting_icon"=> "",
+            "home_icon"=> "",
+            "categories_icon"=> "",
+            "popular_icon"=> "",
+            "favourite_icon"=> "",
+            "back_icon"=> "",
+            "download_icon"=> "",
+            "set_wallpaper_icon"=> "",
+            "favourite_enable_icon"=> "",
+            "favourite_disable_icon"=> "",
             "background_color"=> "#191B21",
             "header_color"=> "#0F1013",
-            "filter_icon"=> "icon/1649613118_8d1ea92b2aca4a160143.png"
+            "filter_icon"=> ""
         ];
 
         return json_encode($settings);

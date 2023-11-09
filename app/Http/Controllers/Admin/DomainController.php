@@ -512,7 +512,7 @@ class DomainController extends Controller
         $length = $request->input('length');
         $search = $request->input('search');
         $domain = Domain::find($id);
-        $wallpapersQuery = $domain->wallpapers()->with('tags')
+        $wallpapersQuery = $domain->wallpapers()
             ->when(isset($search) && $search != 'null', function ($query) use ($search) {
                 $query->where('wallpaper_name','like','%' . $search . '%');
             })

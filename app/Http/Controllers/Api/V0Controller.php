@@ -42,12 +42,10 @@ class V0Controller extends Controller
     }
 
     public function wallpaper($id){
-        $isBlock = checkBlockIp() ? 0 : 1;
-        $categories = getDomain()->categories()->where('category_checked_ip',$isBlock)->get();
-        $wallpapers = Wallpapers::findOrFail($id);
-        $wallpapers->increment('wallpaper_view_count');
-        $wallpapers->categories =  $categories;
-        return (new WallpapersResource($wallpapers))->resolve();
+        $domain = getDomain();
+        $wallpaper = $domain->wallpapers()->findOrFail($id);
+        $wallpaper->increment('wallpaper_view_count');
+        return (new WallpapersResource($wallpaper))->resolve();
     }
 
     public function getWallpapersByCriteria($isBlock, $orderBy, $random = false, $page = 1, $length = 20) {
