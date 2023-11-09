@@ -38,7 +38,9 @@ class V7Controller extends Controller
 
             'reklama_full_pobierz' =>  $basic['isAds'],
             'reklama_full_ustaw' =>  $basic['isAds'],
+            'reklama_full_ustaw_po' =>  $basic['isAds'],
             'reklama_full_share' =>  $basic['isAds'],
+            'reklama_full_po_ptaszek' =>  $basic['isAds'],
             'reklama_lista' =>  $basic['isAds'],
             'reklama_podglad' =>  $basic['isAds'],
 
