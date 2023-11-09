@@ -178,7 +178,7 @@ class V4Controller extends Controller
 
     public function viewWallpaper(Request $request){
         $domain = getDomain();
-        $wallpaper = $domain->wallpapers()->findOrFail($request['id']);
+        $wallpaper = $domain->getWallpaper(checkBlockIp() ? 0 : 1)->findOrFail($request['id']);
         $wallpaper->increment('wallpaper_view_count');
         return New WallpapersResource($wallpaper);
     }

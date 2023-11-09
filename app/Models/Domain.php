@@ -58,8 +58,11 @@ class Domain extends Model
                         ['category_checked_ip', '=', $isBlock],
                         ['domain_id', '=', $this->id]
                     ]);
-                }])
-            ->distinct();
+                },
+                'tags' => function ($query) use ($isBlock) {
+                    $tagIds = $this->categories()->where('category_checked_ip', $isBlock)->first()->tags()->pluck('tags.id');
+                    $query->whereIn('tags.id', $tagIds);
+                }]);
     }
 
     public function ringtones()
