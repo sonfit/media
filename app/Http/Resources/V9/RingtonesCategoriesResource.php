@@ -18,7 +18,6 @@ class RingtonesCategoriesResource extends JsonResource
             'rcid' => $this->id,
             'ringtone_cat_name' => $this->category_name,
             'ringtone_cat_image' => 'domains/'.$this->domain_id.'/categories/'.$this->category_image,
-
         ];
     }
 }

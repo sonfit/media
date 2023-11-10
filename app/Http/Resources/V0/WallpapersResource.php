@@ -23,8 +23,8 @@ class WallpapersResource extends JsonResource
             'detail_image' => asset('storage/wallpapers/thumbnails/'.$this->wallpaper_image),
             'download_image' => asset('storage/wallpapers/originals/'.$this->wallpaper_image),
             'liked' => $this->liked ?? 0,
-            'like_count' => rand($this->wallpaper_like_count,1500),
-            'views' => rand($this->wallpaper_view_count,1500),
+            'like_count' => $this->wallpaper_like_count,
+            'views' => $this->wallpaper_view_count,
             'feature' => $this->wallpaper_feature,
             'created_at' => $this->created_at->format('d/m/Y'),
         ];
