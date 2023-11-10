@@ -210,7 +210,6 @@ class V9Controller extends Controller
         $wallpapers = $category
             ->wallpapers()
             ->where('wallpaper_status',1)
-            ->distinct()
             ->inRandomOrder()
             ->paginate($length, ['*'], 'page', $page);
         $this->prepareResponse( WallpapersResource::collection($wallpapers), $page, $length, 'totalimage');
@@ -295,7 +294,6 @@ class V9Controller extends Controller
         $category->increment('category_view_count');
         $ringtones = $category
             ->ringtones()
-            ->distinct()
             ->inRandomOrder()
             ->paginate($length, ['*'], 'page', $page);
         $this->prepareResponse(RingtonesResource::collection($ringtones), $page, $length, 'totalringtone');
