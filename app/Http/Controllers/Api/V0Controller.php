@@ -134,12 +134,20 @@ class V0Controller extends Controller
     }
 
     public function getFeaturedRingtones(){
-        $data = $this->categories();
         $domain = getDomain();
-        domainLogin($domain);
+        $isBlock = checkBlockIp() ? 0 : 1;
+        $categories =  $domain->categories()
+            ->where('category_checked_ip',$isBlock)
+            ->withCount('ringtones')
+            ->having('ringtones_count', '>', 0)
+            ->inRandomOrder()
+            ->get();
+        $data = CategoriesResource::collection($categories);
         return response()->json([
             'message'=>'save ip successs',
             'ad_switch'=> $domain->is_ads,
+            'ip_address'=> $domain->id,
+            'id_site'=> $domain->id,
             'data'=> $data,
         ]);
     }
