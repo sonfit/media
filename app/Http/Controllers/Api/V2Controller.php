@@ -143,7 +143,7 @@ class V2Controller extends Controller
     }
 
     private function getWallpapersByCriteria($get_method,$isBlock, $orderBy, $random = false) {
-        $length = 12;
+        $length = 10;
         $page = $_GET['page'] ?? 1;
         $limit= ($page-1) * $length ;
         $domain = getDomain();
@@ -165,7 +165,7 @@ class V2Controller extends Controller
     public function get_wallpaperByCategories($get_method){
         $type = trim($get_method['type']);
         $page = $get_method['page'] ?? 1;
-        $length = 20;
+        $length = 10;
         $limit= ($page-1) * $length ;
         $cate_id = $get_method['cat_id'];
         $wallpapers = Categories::findOrFail($cate_id)
