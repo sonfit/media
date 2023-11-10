@@ -65,8 +65,8 @@ Route::group([], function() {
 
 //
 //
-    Route::post('ringtone-favorite/', [FavoriteController::class, 'likeRingtone']);
-    Route::post('ringtone-favorite-unsaved/', [FavoriteController::class, 'dislikeRingtone']);
+    Route::post('ringtone-favorite/', [V0Controller::class, 'likeRingtone']);
+    Route::post('ringtone-favorite-unsaved/', [V0Controller::class, 'dislikeRingtone']);
 
 
 //    Route::post('search', [SearchController::class, 'search']);

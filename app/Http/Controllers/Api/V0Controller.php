@@ -7,6 +7,7 @@ use App\Http\Resources\v0\CategoriesResource;
 use App\Http\Resources\V0\RingtonesResource;
 use App\Http\Resources\v0\WallpapersResource;
 use App\Models\Categories;
+use App\Models\Ringtones;
 use App\Models\Wallpapers;
 use Illuminate\Http\Request;
 
@@ -195,5 +196,22 @@ class V0Controller extends Controller
             $this->getRingtonesByCriteria(checkBlockIp() ? 0 : 1, 'id')[0]
         );
     }
+
+    public function likeRingtone(Request $request)
+    {
+        $response['save_ringtone'] = ['success' => 'Save Successfully'];
+        $ringtone = Ringtones::where('id', $request->ringtone_id)->first();
+        $ringtone->increment('ringtone_like_count');
+        return response()->json($response);
+    }
+
+    public function dislikeRingtone(Request $request)
+    {
+        $response['save_ringtone'] = ['success' => 'Completely Delete this out of your List'];
+        $ringtone = Wallpapers::where('id', $request->ringtone_id)->first();
+        $ringtone->decrement('ringtone_like_count');
+        return response()->json($response);
+    }
+
 
 }
