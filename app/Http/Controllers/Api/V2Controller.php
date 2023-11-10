@@ -14,6 +14,7 @@ class V2Controller extends Controller
 {
     public function getData(){
         $get_method = $this->checkSignSalt($_POST['data']);
+        dd($get_method);
         $data = [];
         if( $get_method['method_name']==="get_app_details"){
             $data = $this->get_app_details();
@@ -31,6 +32,8 @@ class V2Controller extends Controller
             $data =  WallpapersResource::collection($this->getWallpapersByCriteria($get_method,checkBlockIp() ? 0 : 1, 'wallpaper_feature'));
         }elseif ( $get_method['method_name']==="get_single_wallpaper"){
             $data =  $this->get_single_wallpaper($get_method);
+        }elseif ( $get_method['method_name']==="get_single_gif"){
+            $data =  $this->get_single_gif($get_method);
         }elseif ( $get_method['method_name']==="get_recent_post"){
             $data =  WallpapersResource::collection($this->getWallpapersByCriteria($get_method,checkBlockIp() ? 0 : 1, 'wallpaper_feature'));
         }elseif ( $get_method['method_name']==="search_wallpaper"){
@@ -195,8 +198,14 @@ class V2Controller extends Controller
     private function get_single_wallpaper($get_method){
         $wallpaper_id = $get_method['wallpaper_id'];
         $wallpaper = Wallpapers::findOrFail($wallpaper_id);
-        $wallpaper->wallpaper_view_count = $wallpaper->wallpaper_view_count + 1;
-        $wallpaper->save();
+        $wallpaper->increment('wallpaper_view_count');
+        return new WallpapersResource($wallpaper);
+    }
+
+    private function get_single_gif($get_method){
+        $wallpaper_id = $get_method['wallpaper_id'];
+        $wallpaper = Wallpapers::findOrFail($wallpaper_id);
+        $wallpaper->increment('wallpaper_view_count');
         return new WallpapersResource($wallpaper);
     }
 
