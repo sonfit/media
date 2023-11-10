@@ -134,13 +134,13 @@ class V0Controller extends Controller
     }
 
     public function getFeaturedRingtones(){
-        list($ringtones,$domain) = $this->getRingtonesByCriteria(checkBlockIp() ? 0 : 1, 'ringtone_feature');
-        $ringtones =  RingtonesResource::collection($ringtones);
+        $data = $this->categories();
+        $domain = getDomain();
         domainLogin($domain);
         return response()->json([
             'message'=>'save ip successs',
             'ad_switch'=> $domain->is_ads,
-            'data'=> $ringtones,
+            'data'=> $data,
         ]);
     }
 
