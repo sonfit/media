@@ -14,7 +14,7 @@ class V2Controller extends Controller
 {
     public function getData(){
         $get_method = $this->checkSignSalt($_POST['data']);
-//        dd($get_method);
+        dd($get_method);
         $data = [];
         if( $get_method['method_name']==="get_app_details"){
             $data = $this->get_app_details();
@@ -36,6 +36,10 @@ class V2Controller extends Controller
             $data =  WallpapersResource::collection($this->getWallpapersByCriteria($get_method,checkBlockIp() ? 0 : 1, 'wallpaper_feature'));
         }elseif ( $get_method['method_name']==="get_latest_gif"){
             $data =  gifWallpapersResource::collection($this->getWallpapersByCriteria($get_method,checkBlockIp() ? 0 : 1, 'wallpaper_feature','='));
+        }elseif ( $get_method['method_name']==="get_gif_wallpaper_most_viewed"){
+            $data =  gifWallpapersResource::collection($this->getWallpapersByCriteria($get_method,checkBlockIp() ? 0 : 1, 'wallpaper_view_count','='));
+        }elseif ( $get_method['method_name']==="get_gif_wallpaper_most_rated"){
+            $data =  gifWallpapersResource::collection($this->getWallpapersByCriteria($get_method,checkBlockIp() ? 0 : 1, 'wallpaper_like_count','='));
         }
         $set['HD_WALLPAPER'] = $data;
         header('Content-Type: application/json; charset=utf-8');
