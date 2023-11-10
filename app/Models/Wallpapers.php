@@ -38,7 +38,7 @@ class Wallpapers extends Model
             WallpaperTag::class,
             'wallpaper_id',
             'tag_id'
-        );
+        )->groupBy('tags.id');
     }
 
     public function categories()
@@ -48,11 +48,11 @@ class Wallpapers extends Model
             [WallpaperTag::class,CategoryTag::class],
             ['wallpaper_id','tag_id','id'],
             ['id','tag_id','category_id']
-        )->distinct();
+        )->groupBy('categories.id');
     }
 
     public function domains()
     {
-        return $this->hasManyDeepFromRelations($this->categories(), (new Categories)->domain());
+        return $this->hasManyDeepFromRelations($this->categories(), (new Categories)->domain())->groupBy('domains.id');
     }
 }

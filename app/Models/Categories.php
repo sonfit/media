@@ -23,7 +23,7 @@ class Categories extends Model
             CategoryTag::class,
             'category_id',
             'tag_id'
-        );
+        )->groupBy('tags.id');
     }
 
     public function wallpapers()
@@ -35,7 +35,7 @@ class Categories extends Model
             ['id','tag_id','wallpaper_id']
         )->with(['categories' => function($query) {
             $query->where('categories.id', $this->id);
-        }])->distinct();
+        }])->groupBy('wallpapers.id');
     }
 
     public function ringtones()
@@ -45,7 +45,9 @@ class Categories extends Model
             [CategoryTag::class, RingtoneTag::class],
             ['category_id','tag_id','id'],
             ['id','tag_id','ringtone_id']
-        )->distinct();
+        )->with(['categories' => function($query) {
+            $query->where('categories.id', $this->id);
+        }])->groupBy('ringtones.id');
     }
 
     public function musics()
@@ -55,7 +57,9 @@ class Categories extends Model
             [CategoryTag::class, MusicTag::class],
             ['category_id','tag_id','id'],
             ['id','tag_id','music_id']
-        )->distinct();
+        )->with(['categories' => function($query) {
+            $query->where('categories.id', $this->id);
+        }])->groupBy('musics.id');
     }
 
 }

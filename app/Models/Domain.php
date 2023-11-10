@@ -29,7 +29,7 @@ class Domain extends Model
             [Categories::class,CategoryTag::class],
             ['domain_id','category_id','id'],
             ['id','id','tag_id']
-        )->distinct();
+        )->groupBy('tags.id');
     }
 
     //================== WALLPAPERS ============
@@ -41,7 +41,7 @@ class Domain extends Model
                 $tagIds = $this->tags()->pluck('tags.id');
                 $query->whereIn('tags.id', $tagIds);
             }])
-            ->distinct();
+            ->groupBy('wallpapers.id');
     }
 
     public function getWallpaper($isBlock){
@@ -65,14 +65,17 @@ class Domain extends Model
                 }]);
     }
 
+    //================== RINGTONES ============
+
     public function ringtones()
     {
         return $this->hasManyDeepFromRelations($this->tags(), (new Tags)->ringtones())
             ->with(['tags' => function ($query) {
                 $tagIds = $this->tags()->pluck('tags.id');
                 $query->whereIn('tags.id', $tagIds);
-            }])->distinct();
+            }])->groupBy('ringtones.id');
     }
+
     public function getRingtone($isBlock){
         return $this->ringtones()
             ->whereHas('categories', function($query) use ($isBlock) {
@@ -93,6 +96,8 @@ class Domain extends Model
                     $query->whereIn('tags.id', $tagIds);
                 }]);
     }
+
+    //================== MUSICS ============
 
     public function musics()
     {

@@ -18,7 +18,7 @@ class Tags extends Model
             CategoryTag::class,
             'tag_id',
             'category_id'
-        );
+        )->groupBy('categories.id');
     }
 
     public function wallpapers()
@@ -28,7 +28,7 @@ class Tags extends Model
             WallpaperTag::class,
             'tag_id',
             'wallpaper_id'
-        );
+        )->groupBy('wallpapers.id');
     }
 
     public function ringtones()
@@ -38,7 +38,7 @@ class Tags extends Model
             RingtoneTag::class,
             'tag_id',
             'ringtone_id'
-        );
+        )->groupBy('ringtones.id');
     }
 
     public function musics()
@@ -48,12 +48,12 @@ class Tags extends Model
             MusicTag::class,
             'tag_id',
             'music_id'
-        );
+        )->groupBy('musics.id');
     }
 
     public function domains()
     {
-        return $this->hasManyDeepFromRelations($this->categories(), (new Categories)->domain())->distinct();
+        return $this->hasManyDeepFromRelations($this->categories(), (new Categories)->domain())->groupBy('domains.id');
     }
 
 

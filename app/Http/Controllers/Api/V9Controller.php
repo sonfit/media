@@ -142,7 +142,7 @@ class V9Controller extends Controller
         return $this->get_featured_img_cat();
     }
 
-    private function getWallpapersByCriteria($isBlock, $orderBy, $operator, $random = false, $page = 1, $length = 10) {
+    private function getWallpapersByCriteria($isBlock, $orderBy, $operator, $random = false, $page = 1, $length = 100) {
         $domain = getDomain();
         $query = $domain
             ->getWallpaper($isBlock)
@@ -153,7 +153,8 @@ class V9Controller extends Controller
         } else {
             $query = $query->orderByDesc($orderBy);
         }
-        return $query->paginate($length, ['*'], 'page', $page);
+        return $query
+            ->paginate($length, ['*'], 'page', $page);
     }
 
     public function get_trending_gif_List(){
