@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V2\CategoriesResource;
+use App\Http\Resources\V2\gifWallpapersResource;
 use App\Http\Resources\V2\WallpapersResource;
 use App\Models\Categories;
 use App\Models\Wallpapers;
@@ -33,6 +34,8 @@ class V2Controller extends Controller
             $data =  $this->get_single_wallpaper($get_method);
         }elseif ( $get_method['method_name']==="get_recent_post"){
             $data =  WallpapersResource::collection($this->getWallpapersByCriteria($get_method,checkBlockIp() ? 0 : 1, 'wallpaper_feature'));
+        }elseif ( $get_method['method_name']==="get_latest_gif"){
+            $data =  gifWallpapersResource::collection($this->getWallpapersByCriteria($get_method,checkBlockIp() ? 0 : 1, 'wallpaper_feature','='));
         }
         $set['HD_WALLPAPER'] = $data;
         header('Content-Type: application/json; charset=utf-8');
@@ -142,14 +145,16 @@ class V2Controller extends Controller
         return $row;
     }
 
-    private function getWallpapersByCriteria($get_method,$isBlock, $orderBy, $random = false) {
+    private function getWallpapersByCriteria($get_method,$isBlock, $orderBy,$operator = '<>', $random = false) {
         $length = 10;
         $page = $get_method['page'] ?? 1;
         $domain = getDomain();
         $query = $domain
             ->getWallpaper($isBlock)
-            ->where('wallpaper_extension', '<>', 'image/gif')
-            ->where('wallpaper_type',$get_method['type'])
+            ->where('wallpaper_extension', $operator, 'image/gif')
+            ->when(isset($get_method['type']), function ($query) use ($get_method) {
+                $query ->where('wallpaper_type',$get_method['type']);
+            })
             ->where('wallpaper_status',1);
         if ($random) {
             $query = $query->inRandomOrder();
