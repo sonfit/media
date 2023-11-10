@@ -33,7 +33,7 @@ Route::post('/get-domains-by-user', [ApiController::class, 'getDomainsbyUser'])-
 Route::group([], function() {
     Route::get('/categories', [V0Controller::class, 'categories']);
 
-    Route::get('/categories/{category_id}/wallpapers', [V0Controller::class, 'wallpapersByCategories']);
+    Route::get('/categories/{category_id}/wallpapers', [V0Controller::class, 'wallpapersByCategory']);
     Route::get('/wallpaper-detail/{id}/{device_id?}', [V0Controller::class, 'wallpaper']);
 
     Route::get('/wallpapers/featured', [V0Controller::class, 'getFeatured']);
@@ -46,16 +46,20 @@ Route::group([], function() {
 
     //Ringtones
 
-    Route::get('/categories/popular', [CategoriesController::class, 'getPopulared']);
+    Route::get('ringtones/featured', [V0Controller::class, 'getFeaturedRingtones']);
+    Route::get('ringtones/newest/{deviceId?}', [V0Controller::class, 'getNewestRingtones']);
+    Route::get('ringtones/popular/{deviceId?}', [V0Controller::class, 'getPopularityRingtones']);
+    Route::get('ringtones/most-download/{deviceId?}', [V0Controller::class, 'getMostDownloadRingtones']);
 
-    Route::get('categories/{category_id}/ringtones/{deviceId}', [RingtonesController::class, 'getRingtonesByCate']);
+    Route::get('/categories/popular', [V0Controller::class, 'categories']);
+
+    Route::get('categories/{category_id}/ringtones/{deviceId?}', [V0Controller::class, 'ringtonesByCategory']);
 //
-    Route::get('ringtone-detail/{id}/{device_id}', [RingtonesController::class, 'show']);
-    Route::get('ringtones/featured', [RingtonesController::class, 'getFeatured']);
-    Route::get('ringtones/popular/{deviceId}', [RingtonesController::class, 'getPopulared']);
-    Route::get('ringtones/newest/{deviceId}', [RingtonesController::class, 'getNewest']);
+    Route::get('ringtone-detail/{id}/{device_id?}', [V0Controller::class, 'ringtone']);
+
+
 ////    Route::get('ringtones/premium', [RingtonesController::class, 'getPremium']);
-    Route::get('ringtones/most-download/{deviceId}', [RingtonesController::class, 'getMostDownload']);
+
 //
 //
     Route::post('ringtone-favorite/', [FavoriteController::class, 'likeRingtone']);

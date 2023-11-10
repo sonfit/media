@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\v0\CategoriesResource;
+use App\Http\Resources\V0\RingtonesResource;
 use App\Http\Resources\v0\WallpapersResource;
 use App\Models\Categories;
 use App\Models\Wallpapers;
@@ -25,7 +26,7 @@ class V0Controller extends Controller
         return CategoriesResource::collection($categories);
     }
 
-    public function wallpapersByCategories($id){
+    public function wallpapersByCategory($id){
         $page = $_GET['page'] ?? 1;
         $length = 20;
         $category = Categories::findOrFail($id);
@@ -110,5 +111,85 @@ class V0Controller extends Controller
         $wallpaper->decrement('wallpaper_like_count');
         return response()->json($response);
     }
+
+
+    //================= RINGTONES ============================
+
+    public function getRingtonesByCriteria($isBlock, $orderBy, $random = false) {
+        $length = 12;
+        $page = $_GET['page'] ?? 1;
+        $domain = getDomain();
+        $query = $domain
+            ->getRingtone($isBlock);
+        if ($random) {
+            $query = $query->inRandomOrder();
+        } else {
+            $query = $query->orderByDesc($orderBy);
+        }
+        return [
+            $query
+                ->paginate($length, ['*'], 'page', $page),
+            $domain
+        ];
+    }
+
+    public function getFeaturedRingtones(){
+        list($ringtones,$domain) = $this->getRingtonesByCriteria(checkBlockIp() ? 0 : 1, 'ringtone_feature');
+        $ringtones =  RingtonesResource::collection($ringtones);
+        domainLogin($domain);
+        return response()->json([
+            'message'=>'save ip successs',
+            'ad_switch'=> $domain->is_ads,
+            'data'=> $ringtones,
+        ]);
+    }
+
+    public function getNewestRingtones(){
+        return RingtonesResource::collection(
+            $this->getRingtonesByCriteria(checkBlockIp() ? 0 : 1, 'id')[0]
+        );
+    }
+
+    public function getPopularityRingtones(){
+        return RingtonesResource::collection(
+            $this->getRingtonesByCriteria(checkBlockIp() ? 0 : 1, 'ringtone_view_count')[0]
+        );
+    }
+    public function getMostDownloadRingtones(){
+        return RingtonesResource::collection(
+            $this->getRingtonesByCriteria(checkBlockIp() ? 0 : 1, 'ringtone_download_count')[0]
+        );
+    }
+
+    public function ringtonesByCategory($id){
+        $page = $_GET['page'] ?? 1;
+        $length = 20;
+        $category = Categories::findOrFail($id);
+        $category->increment('category_view_count');
+        $ringtones = $category
+            ->ringtones()
+            ->inRandomOrder()
+            ->paginate($length, ['*'], 'page', $page);
+        return RingtonesResource::collection($ringtones);
+    }
+
+    public function ringtone($id){
+        $domain = getDomain();
+        $ringtone = $domain->ringtones()->findOrFail($id);
+        $ringtone->increment('ringtone_view_count');
+        return (new WallpapersResource($ringtone))->resolve();
+    }
+//    public function categories(){
+//        $domain = getDomain();
+//        $isBlock = checkBlockIp() ? 0 : 1;
+//        $categories =  $domain->categories()
+//            ->where('category_checked_ip',$isBlock)
+//            ->withCount('wallpapers','ringtones')
+//            ->having('wallpapers_count', '>', 0)
+//            ->orhaving('ringtones_count', '>', 0)
+//            ->inRandomOrder()
+//            ->get();
+//        return CategoriesResource::collection($categories);
+//    }
 
 }
