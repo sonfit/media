@@ -14,7 +14,6 @@ class V2Controller extends Controller
 {
     public function getData(){
         $get_method = $this->checkSignSalt($_POST['data']);
-        dd($get_method);
         $data = [];
         if( $get_method['method_name']==="get_app_details"){
             $data = $this->get_app_details();
