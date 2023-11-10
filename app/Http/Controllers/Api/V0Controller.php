@@ -117,7 +117,7 @@ class V0Controller extends Controller
         $length = 12;
         $page = $_GET['page'] ?? 1;
         $domain = getDomain();
-        $search = $_GET['query'] ?? null;
+        $search = $_POST['query'] ?? null;
         $query = $domain
             ->getRingtone($isBlock)
             ->when(isset($search), function ($query) use ($search) {

@@ -58,7 +58,7 @@ Route::group([], function() {
 //
     Route::get('ringtone-detail/{id}/{device_id?}', [V0Controller::class, 'ringtone']);
 
-    Route::get('search', [V0Controller::class, 'searchRingtones']);
+    Route::post('search', [V0Controller::class, 'searchRingtones']);
 
 
 ////    Route::get('ringtones/premium', [RingtonesController::class, 'getPremium']);
