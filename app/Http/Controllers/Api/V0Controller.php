@@ -117,8 +117,12 @@ class V0Controller extends Controller
         $length = 12;
         $page = $_GET['page'] ?? 1;
         $domain = getDomain();
+        $search = $_GET['query'] ?? null;
         $query = $domain
-            ->getRingtone($isBlock);
+            ->getRingtone($isBlock)
+            ->when(isset($search), function ($query) use ($search) {
+                $query ->where('ringtone_name','like','%'.$search.'%');
+            });
         if ($random) {
             $query = $query->inRandomOrder();
         } else {
@@ -184,6 +188,12 @@ class V0Controller extends Controller
         $ringtone = $domain->ringtones()->findOrFail($id);
         $ringtone->increment('ringtone_view_count');
         return (new WallpapersResource($ringtone))->resolve();
+    }
+
+    public function searchRingtones(){
+        return RingtonesResource::collection(
+            $this->getRingtonesByCriteria(checkBlockIp() ? 0 : 1, 'id')[0]
+        );
     }
 
 }
