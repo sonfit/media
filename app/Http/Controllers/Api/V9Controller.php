@@ -132,7 +132,7 @@ class V9Controller extends Controller
             ->withCount('wallpapers')
             ->having('wallpapers_count', '>', 0)
             ->inRandomOrder()
-            ->paginate(5);
+            ->paginate(10);
         $getResource= CategoriesResource::collection($categories);
         $set['video-status-image'] = $getResource;
         $this->response($this->json($set), 200);
@@ -142,80 +142,69 @@ class V9Controller extends Controller
         return $this->get_featured_img_cat();
     }
 
-    private function getWallpapersByCriteria($isBlock, $orderBy, $operator, $random = false, $page = 1, $length = 100) {
+
+    private function getWallpapersByCriteria($isBlock, $orderBy, $operator, $random = false, $page = 1, $length = 10) {
         $domain = getDomain();
         $query = $domain
             ->getWallpaper($isBlock)
             ->where('wallpaper_extension', $operator, 'image/gif')
-            ->where('wallpaper_status',1);
+            ->where('wallpaper_status', 1);
+
         if ($random) {
             $query = $query->inRandomOrder();
         } else {
             $query = $query->orderByDesc($orderBy);
         }
-        return $query
-            ->paginate($length, ['*'], 'page', $page);
+        return $query->paginate($length, ['*'], 'page', $page);
     }
 
-    public function get_trending_gif_List(){
-        $page =  $_GET['page'] ?? 1;
-        $wallpapers = gifWallpapersResource::collection($this->getWallpapersByCriteria(checkBlockIp() ? 0 : 1, 'wallpaper_like_count','=',false,$page));
+    private function prepareResponse($wallpapers, $page, $length, $totalKey) {
         $dataResult['page'] = $page;
-        $dataResult['limit'] = 10;
-        $dataResult['totalgif'] = $wallpapers->total();
+        $dataResult['limit'] = $length;
+        $dataResult[$totalKey] = $wallpapers->total();
         $dataResult['success'] = 1;
         $dataResult['video-status-image'] = $wallpapers;
         $this->response($this->json($dataResult), 200);
     }
 
-    public function get_home_gif_List(){
-        $page =  $_GET['page'] ?? 1;
-        $wallpapers = gifWallpapersResource::collection($this->getWallpapersByCriteria(checkBlockIp() ? 0 : 1, 'id','=',true,$page));
-        $dataResult['page'] = $page;
-        $dataResult['limit'] = 10;
-        $dataResult['totalgif'] = $wallpapers->total();
-        $dataResult['success'] = 1;
-        $dataResult['video-status-image'] = $wallpapers;
-        $this->response($this->json($dataResult), 200);
+    public function get_trending_gif_List() {
+        $page = $_GET['page'] ?? 1;
+        $length = $_GET['length'] ?? 10;
+        $wallpapers = gifWallpapersResource::collection($this->getWallpapersByCriteria(checkBlockIp() ? 0 : 1, 'wallpaper_like_count', '=', false, $page, $length));
+        $this->prepareResponse($wallpapers, $page, $length, 'totalgif');
     }
 
-    public function get_home_img_list(){
-        $page =  $_GET['page'] ?? 1;
-        $wallpapers = WallpapersResource::collection($this->getWallpapersByCriteria(checkBlockIp() ? 0 : 1, 'id','<>',true,$page));
-        $dataResult['page'] = $page;
-        $dataResult['limit'] = 10;
-        $dataResult['totalimage'] = $wallpapers->total();
-        $dataResult['success'] = 1;
-        $dataResult['video-status-image'] = $wallpapers;
-        $this->response($this->json($dataResult), 200);
+    public function get_home_gif_List() {
+        $page = $_GET['page'] ?? 1;
+        $length = $_GET['length'] ?? 10;
+        $wallpapers = gifWallpapersResource::collection($this->getWallpapersByCriteria(checkBlockIp() ? 0 : 1, 'id', '=', true, $page, $length));
+
+        $this->prepareResponse($wallpapers, $page, $length, 'totalgif');
     }
 
-    public function get_home_img_list_recent(){
-        $page =  $_GET['page'] ?? 1;
-        $wallpapers = WallpapersResource::collection($this->getWallpapersByCriteria(checkBlockIp() ? 0 : 1, 'id','<>',false,$page));
-        $dataResult['page'] = $page;
-        $dataResult['limit'] = 10;
-        $dataResult['totalimage'] = $wallpapers->total();
-        $dataResult['success'] = 1;
-        $dataResult['video-status-image'] = $wallpapers;
-        $this->response($this->json($dataResult), 200);
+    public function get_home_img_list() {
+        $page = $_GET['page'] ?? 1;
+        $length = $_GET['length'] ?? 10;
+        $wallpapers = WallpapersResource::collection($this->getWallpapersByCriteria(checkBlockIp() ? 0 : 1, 'id', '<>', true, $page, $length));
+        $this->prepareResponse($wallpapers, $page, $length, 'totalimage');
     }
 
-    public function get_home_img_list_popular(){
-        $page =  $_GET['page'] ?? 1;
-        $wallpapers = WallpapersResource::collection($this->getWallpapersByCriteria(checkBlockIp() ? 0 : 1, 'wallpaper_view_count','<>',false,$page));
-        $dataResult['page'] = $page;
-        $dataResult['limit'] = 10;
-        $dataResult['totalimage'] = $wallpapers->total();
-        $dataResult['success'] = 1;
-        $dataResult['video-status-image'] = $wallpapers;
-        $this->response($this->json($dataResult), 200);
+    public function get_home_img_list_recent() {
+        $page = $_GET['page'] ?? 1;
+        $length = $_GET['length'] ?? 10;
+        $wallpapers = WallpapersResource::collection($this->getWallpapersByCriteria(checkBlockIp() ? 0 : 1, 'id', '<>', false, $page, $length));
+        $this->prepareResponse($wallpapers, $page, $length, 'totalimage');
     }
-
-    public function get_img_list(){
+    public function get_home_img_list_popular() {
+        $page = $_GET['page'] ?? 1;
+        $length = $_GET['length'] ?? 10;
+        $wallpapers = WallpapersResource::collection($this->getWallpapersByCriteria(checkBlockIp() ? 0 : 1, 'wallpaper_view_count', '<>', false, $page, $length));
+        $this->prepareResponse($wallpapers, $page, $length, 'totalimage');
+    }
+    public function get_img_list() {
         $cate_id = $_GET['cat_id'];
         $page = $_GET['page'] ?? 1;
-        $length = 20;
+        $length = $_GET['length'] ?? 10;
         $category = Categories::findOrFail($cate_id);
         $category->increment('category_view_count');
         $wallpapers = $category
@@ -224,81 +213,66 @@ class V9Controller extends Controller
             ->distinct()
             ->inRandomOrder()
             ->paginate($length, ['*'], 'page', $page);
+        $this->prepareResponse( WallpapersResource::collection($wallpapers), $page, $length, 'totalimage');
+    }
 
-        $dataResult['page'] = $page;
-        $dataResult['limit'] = 10;
-        $dataResult['totalimage'] = $wallpapers->total();
-        $dataResult['success'] = 1;
-        $dataResult['video-status-image'] = WallpapersResource::collection($wallpapers);
-        $this->response($this->json($dataResult), 200);
+    private function updateWallpaperCount($wallpaper_id, $countType) {
+        $wallpaper = Wallpapers::find($wallpaper_id);
+
+        if ($wallpaper) {
+            $wallpaper->increment($countType);
+            $response = [
+                'video-status-image' => [
+                    'success' => '1',
+                    'message' => "Wallpaper {$countType} count updated",
+                    $countType => $wallpaper->$countType,
+                ],
+            ];
+            $this->response($this->json($response), 200);
+        } else {
+            $response = [
+                'success' => 'failed',
+                'message' => 'Oops, API Key is Incorrect!',
+            ];
+            $this->response($this->json($response), 404);
+        }
     }
 
     public function wallpaper_download_count() {
         $image_id = $_POST['wallpaper_id'];
-        $wallpaper = Wallpapers::find($image_id);
-        if ($wallpaper) {
-            $wallpaper->increment('wallpaper_download_count');
-            $set['video-status-image'] = array( 'success' => '1', 'message' => 'wallpaper downloads count updated');
-            $this->response($this->json($set), 200);
-        } else {
-            $respon = array( 'success' => 'failed', '0' => 'Oops, API Key is Incorrect!');
-            $this->response($this->json($respon), 404);
-        }
+        $this->updateWallpaperCount($image_id, 'wallpaper_download_count');
     }
 
     public function wallpaper_view_count() {
         $image_id = $_POST['wallpaper_id'];
-        $wallpaper = Wallpapers::find($image_id);
-        if ($wallpaper) {
-            $wallpaper->increment('wallpaper_view_count');
-            $set['video-status-image'] = array( 'success' => '1', 'message' => 'wallpaper view count updated','view'=>$wallpaper);;
-
-            $this->response($this->json($set), 200);
-        } else {
-            $respon = array( 'success' => 'failed', '0' => 'Oops, API Key is Incorrect!');
-            $this->response($this->json($respon), 404);
-        }
-
+        $this->updateWallpaperCount($image_id, 'wallpaper_view_count');
     }
-
 
     public function get_img_search(){
         $search = '%' .$_GET['search_value'].'%' ;
         $page =  $_GET['page'] ?? 1;
-        $length = 10;
+        $length = $_GET['length'] ?? 10;
         $domain = getDomain();
         $isBlock = checkBlockIp() ? 0 : 1;
-        $data = $domain
+        $wallpapers = $domain
             ->getWallpaper($isBlock)
             ->where('wallpaper_name','like',$search)
             ->where('wallpaper_status',1)
             ->paginate($length, ['*'], 'page', $page);;
-        $getResource = WallpapersResource::collection($data);
-        $set['page'] = $page;
-        $set['totalimage'] = $data->total();
-        $set['limit'] = '10';
-        $set['success'] = '1';
-        $set['video-status-image'] = $getResource;
-        $this->response($this->json($set), 200);
+        $this->prepareResponse(WallpapersResource::collection($wallpapers), $page, $length, 'totalimage');
     }
 
     public function get_ringtone_search(){
         $search = '%' .$_GET['search_value'].'%' ;
         $page =  $_GET['page'] ?? 1;
-        $length = 10;
+        $length = $_GET['length'] ?? 10;
         $domain = getDomain();
         $isBlock = checkBlockIp() ? 0 : 1;
-        $data = $domain
+        $ringtones = $domain
             ->getRingtone($isBlock)
             ->where('ringtone_name','like',$search)
             ->paginate($length, ['*'], 'page', $page);
-        $getResource = RingtonesResource::collection($data);
-        $set['page'] = $page;
-        $set['totalimage'] = $data->total();
-        $set['limit'] = '10';
-        $set['success'] = '1';
-        $set['video-status-image'] = $getResource;
-        $this->response($this->json($set), 200);
+        $this->prepareResponse($ringtones, $page, $length, 'totalringtone');
     }
 
     private function getRingtonesByCriteria($isBlock, $orderBy,  $random = false, $page = 1, $length = 10) {
@@ -316,7 +290,7 @@ class V9Controller extends Controller
     public function get_ringtone_List(){
         $cate_id = $_GET['cat_id'];
         $page = $_GET['page'] ?? 1;
-        $length = 20;
+        $length = $_GET['length'] ?? 10;
         $category = Categories::findOrFail($cate_id);
         $category->increment('category_view_count');
         $ringtones = $category
@@ -324,27 +298,18 @@ class V9Controller extends Controller
             ->distinct()
             ->inRandomOrder()
             ->paginate($length, ['*'], 'page', $page);
-
-        $dataResult['page'] = $page;
-        $dataResult['limit'] = 10;
-        $dataResult['totalringtone'] = $ringtones->total();
-        $dataResult['success'] = 1;
-        $dataResult['video-status-image'] = WallpapersResource::collection($ringtones);
-        $this->response($this->json($dataResult), 200);
+        $this->prepareResponse(RingtonesResource::collection($ringtones), $page, $length, 'totalringtone');
     }
 
     public function get_home_ringtone_List(){
         $page =  $_GET['page'] ?? 1;
-        $wallpapers = RingtonesResource::collection($this->getRingtonesByCriteria(checkBlockIp() ? 0 : 1, 'id',true,$page));
-        $dataResult['page'] = $page;
-        $dataResult['limit'] = 10;
-        $dataResult['totalringtone'] = $wallpapers->total();
-        $dataResult['success'] = 1;
-        $dataResult['video-status-image'] = $wallpapers;
-        $this->response($this->json($dataResult), 200);
+        $length = $_GET['length'] ?? 10;
+        $ringtones = RingtonesResource::collection($this->getRingtonesByCriteria(checkBlockIp() ? 0 : 1, 'id',  true, $page, $length));
+        $this->prepareResponse($ringtones, $page, $length, 'totalringtone');
     }
+
     public function get_featured_ringtone_cat(){
-        return $this->get_ringtone_cate();
+        return $this->get_ringtone_cat();
     }
 
     public function get_ringtone_cat(){
@@ -360,7 +325,6 @@ class V9Controller extends Controller
         $set['video-status-image'] = $getResource;
         $this->response($this->json($set), 200);
     }
-
 
     public function ringtone_download_count() {
         $ringtone_id = $_POST['ringtone_id'];

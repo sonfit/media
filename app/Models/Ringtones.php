@@ -35,7 +35,7 @@ class Ringtones extends Model
             RingtoneTag::class,
             'ringtone_id',
             'tag_id'
-        )->groupBy('tags.id');
+        );
     }
 
     public function categories()
@@ -45,11 +45,11 @@ class Ringtones extends Model
             [RingtoneTag::class,CategoryTag::class],
             ['ringtone_id','tag_id','id'],
             ['id','tag_id','category_id']
-        )->groupBy('categories.id');
+        );
     }
 
     public function domains()
     {
-        return $this->hasManyDeepFromRelations($this->categories(), (new Categories)->domain())->groupBy('domains.id');
+        return $this->hasManyDeepFromRelations($this->categories(), (new Categories)->domain());
     }
 }

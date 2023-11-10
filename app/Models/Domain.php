@@ -29,7 +29,7 @@ class Domain extends Model
             [Categories::class,CategoryTag::class],
             ['domain_id','category_id','id'],
             ['id','id','tag_id']
-        )->groupBy('tags.id');
+        );
     }
 
     //================== WALLPAPERS ============
