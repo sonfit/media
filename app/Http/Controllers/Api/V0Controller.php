@@ -179,17 +179,5 @@ class V0Controller extends Controller
         $ringtone->increment('ringtone_view_count');
         return (new WallpapersResource($ringtone))->resolve();
     }
-//    public function categories(){
-//        $domain = getDomain();
-//        $isBlock = checkBlockIp() ? 0 : 1;
-//        $categories =  $domain->categories()
-//            ->where('category_checked_ip',$isBlock)
-//            ->withCount('wallpapers','ringtones')
-//            ->having('wallpapers_count', '>', 0)
-//            ->orhaving('ringtones_count', '>', 0)
-//            ->inRandomOrder()
-//            ->get();
-//        return CategoriesResource::collection($categories);
-//    }
 
 }
