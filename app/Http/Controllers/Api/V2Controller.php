@@ -13,26 +13,26 @@ class V2Controller extends Controller
 {
     public function getData(){
         $get_method = $this->checkSignSalt($_POST['data']);
-
 //        dd($get_method);
-        if( $get_method['method_name']=="get_app_details"){
+        $data = [];
+        if( $get_method['method_name']==="get_app_details"){
             $data = $this->get_app_details();
-        }elseif ( $get_method['method_name']=="get_home"){
+        }elseif ( $get_method['method_name']==="get_home"){
             $data = $this->get_home($get_method);
-        }elseif ( $get_method['method_name']=="get_wallpaper"){
+        }elseif ( $get_method['method_name']==="get_wallpaper"){
             $data = $this->get_wallpaperByCategories($get_method);
-        }elseif ( $get_method['method_name']=="get_category"){
+        }elseif ( $get_method['method_name']==="get_category"){
             $data = $this->categories();
-        }elseif ( $get_method['method_name']=="get_wallpaper_most_viewed"){
+        }elseif ( $get_method['method_name']==="get_wallpaper_most_viewed"){
             $data =  WallpapersResource::collection($this->getWallpapersByCriteria($get_method,checkBlockIp() ? 0 : 1, 'wallpaper_view_count'));
-        }elseif ( $get_method['method_name']=="get_latest"){
+        }elseif ( $get_method['method_name']==="get_latest"){
             $data =  WallpapersResource::collection($this->getWallpapersByCriteria($get_method,checkBlockIp() ? 0 : 1, 'updated_at'));
-        }elseif ( $get_method['method_name']=="get_recent_post"){
-            $data =  WallpapersResource::collection($this->getWallpapersByCriteria($get_method,checkBlockIp() ? 0 : 1, 'created_at'));
-        }elseif ( $get_method['method_name']=="get_wallpaper_most_rated"){
+        }elseif ( $get_method['method_name']==="get_wallpaper_most_rated"){
             $data =  WallpapersResource::collection($this->getWallpapersByCriteria($get_method,checkBlockIp() ? 0 : 1, 'wallpaper_feature'));
-        }elseif ( $get_method['method_name']=="get_single_wallpaper"){
+        }elseif ( $get_method['method_name']==="get_single_wallpaper"){
             $data =  $this->get_single_wallpaper($get_method);
+        }elseif ( $get_method['method_name']==="get_recent_post"){
+            $data =  WallpapersResource::collection($this->getWallpapersByCriteria($get_method,checkBlockIp() ? 0 : 1, 'wallpaper_feature'));
         }
         $set['HD_WALLPAPER'] = $data;
         header('Content-Type: application/json; charset=utf-8');
@@ -144,8 +144,7 @@ class V2Controller extends Controller
 
     private function getWallpapersByCriteria($get_method,$isBlock, $orderBy, $random = false) {
         $length = 10;
-        $page = $_GET['page'] ?? 1;
-        $limit= ($page-1) * $length ;
+        $page = $get_method['page'] ?? 1;
         $domain = getDomain();
         $query = $domain
             ->getWallpaper($isBlock)
@@ -158,15 +157,13 @@ class V2Controller extends Controller
             $query = $query->orderByDesc($orderBy);
         }
         return $query
-//            ->paginate($length, ['*'], 'page', $page);
-            ->skip($limit)->take($length)->get();
+            ->paginate($length, ['*'], 'page', $page);
     }
 
     public function get_wallpaperByCategories($get_method){
         $type = trim($get_method['type']);
         $page = $get_method['page'] ?? 1;
         $length = 10;
-        $limit= ($page-1) * $length ;
         $cate_id = $get_method['cat_id'];
         $wallpapers = Categories::findOrFail($cate_id)
             ->wallpapers()
@@ -174,8 +171,7 @@ class V2Controller extends Controller
             ->where('wallpaper_status',1)
             ->where('wallpaper_type',$type)
             ->inRandomOrder()
-            ->skip($limit)->take($length)->get();
-//            ->paginate($length, ['*'], 'page', $page);
+            ->paginate($length, ['*'], 'page', $page);
         return WallpapersResource::collection($wallpapers);
     }
 
