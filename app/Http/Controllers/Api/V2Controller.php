@@ -33,12 +33,16 @@ class V2Controller extends Controller
             $data =  $this->get_single_wallpaper($get_method);
         }elseif ( $get_method['method_name']==="get_recent_post"){
             $data =  WallpapersResource::collection($this->getWallpapersByCriteria($get_method,checkBlockIp() ? 0 : 1, 'wallpaper_feature'));
+        }elseif ( $get_method['method_name']==="search_wallpaper"){
+            $data =  WallpapersResource::collection($this->getWallpapersByCriteria($get_method,checkBlockIp() ? 0 : 1, 'updated_at'));
         }elseif ( $get_method['method_name']==="get_latest_gif"){
             $data =  gifWallpapersResource::collection($this->getWallpapersByCriteria($get_method,checkBlockIp() ? 0 : 1, 'wallpaper_feature','='));
         }elseif ( $get_method['method_name']==="get_gif_wallpaper_most_viewed"){
             $data =  gifWallpapersResource::collection($this->getWallpapersByCriteria($get_method,checkBlockIp() ? 0 : 1, 'wallpaper_view_count','='));
         }elseif ( $get_method['method_name']==="get_gif_wallpaper_most_rated"){
             $data =  gifWallpapersResource::collection($this->getWallpapersByCriteria($get_method,checkBlockIp() ? 0 : 1, 'wallpaper_like_count','='));
+        }elseif ( $get_method['method_name']==="search_gif"){
+            $data =  gifWallpapersResource::collection($this->getWallpapersByCriteria($get_method,checkBlockIp() ? 0 : 1, 'updated_at','='));
         }
         $set['HD_WALLPAPER'] = $data;
         header('Content-Type: application/json; charset=utf-8');
@@ -152,11 +156,16 @@ class V2Controller extends Controller
         $length = 10;
         $page = $get_method['page'] ?? 1;
         $domain = getDomain();
+        $search = $get_method['gif_search_text'] ?? $get_method['search_text'] ?? null;
+
         $query = $domain
             ->getWallpaper($isBlock)
             ->where('wallpaper_extension', $operator, 'image/gif')
             ->when(isset($get_method['type']), function ($query) use ($get_method) {
                 $query ->where('wallpaper_type',$get_method['type']);
+            })
+            ->when(isset($search), function ($query) use ($search, $get_method) {
+                $query ->where('wallpaper_name','like','%'.$search.'%');
             })
             ->where('wallpaper_status',1);
         if ($random) {
