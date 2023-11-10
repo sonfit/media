@@ -42,6 +42,7 @@ Route::group([], function() {
 
     Route::post('/wallpaper-favorite', [V0Controller::class, 'likeWallpaper']);
     Route::post('/wallpaper-favorite-unsaved', [V0Controller::class, 'disLikeWallpaper']);
+
     Route::get('/favorite/{device_id?}', [V0Controller::class, 'getSaved']);
 
     //Ringtones

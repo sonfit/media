@@ -91,9 +91,7 @@ class V0Controller extends Controller
     }
 
     public function getSaved(){
-        return WallpapersResource::collection(
-            $this->getWallpapersByCriteria(checkBlockIp() ? 0 : 1, 'id',true)[0]
-        );
+        return response()->json([], 200);
     }
 
     public function likeWallpaper(Request $request)
