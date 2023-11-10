@@ -14,7 +14,7 @@ class V2Controller extends Controller
 {
     public function getData(){
         $get_method = $this->checkSignSalt($_POST['data']);
-//        dd($get_method);
+        dd($get_method);
         $data = [];
         if( $get_method['method_name']==="get_app_details"){
             $data = $this->get_app_details();
@@ -203,10 +203,10 @@ class V2Controller extends Controller
     }
 
     private function get_single_gif($get_method){
-        $wallpaper_id = $get_method['wallpaper_id'];
+        $wallpaper_id = $get_method['gif_id'];
         $wallpaper = Wallpapers::findOrFail($wallpaper_id);
         $wallpaper->increment('wallpaper_view_count');
-        return new WallpapersResource($wallpaper);
+        return new gifWallpapersResource($wallpaper);
     }
 
     public function categories(){
