@@ -271,7 +271,7 @@ class V9Controller extends Controller
             ->getRingtone($isBlock)
             ->where('ringtone_name','like',$search)
             ->paginate($length, ['*'], 'page', $page);
-        $this->prepareResponse($ringtones, $page, $length, 'totalringtone');
+        $this->prepareResponse(RingtonesResource::collection($ringtones), $page, $length, 'totalringtone');
     }
 
     private function getRingtonesByCriteria($isBlock, $orderBy,  $random = false, $page = 1, $length = 10) {
