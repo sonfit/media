@@ -145,6 +145,7 @@ class V2Controller extends Controller
     private function getWallpapersByCriteria($get_method,$isBlock, $orderBy, $random = false) {
         $length = 12;
         $page = $_GET['page'] ?? 1;
+        $limit= ($page-1) * $length ;
         $domain = getDomain();
         $query = $domain
             ->getWallpaper($isBlock)
@@ -156,13 +157,16 @@ class V2Controller extends Controller
         } else {
             $query = $query->orderByDesc($orderBy);
         }
-        return $query->paginate($length, ['*'], 'page', $page);
+        return $query
+//            ->paginate($length, ['*'], 'page', $page);
+            ->skip($limit)->take($length)->get();
     }
 
     public function get_wallpaperByCategories($get_method){
         $type = trim($get_method['type']);
         $page = $get_method['page'] ?? 1;
         $length = 20;
+        $limit= ($page-1) * $length ;
         $cate_id = $get_method['cat_id'];
         $wallpapers = Categories::findOrFail($cate_id)
             ->wallpapers()
@@ -170,7 +174,8 @@ class V2Controller extends Controller
             ->where('wallpaper_status',1)
             ->where('wallpaper_type',$type)
             ->inRandomOrder()
-            ->paginate($length, ['*'], 'page', $page);
+            ->skip($limit)->take($length)->get();
+//            ->paginate($length, ['*'], 'page', $page);
         return WallpapersResource::collection($wallpapers);
     }
 
