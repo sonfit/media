@@ -36,10 +36,10 @@ class V0Controller extends Controller
             ->where('wallpaper_extension','image/jpeg')
             ->where('wallpaper_status',1)
             ->inRandomOrder()
-            ->paginate($length, ['*'], 'page', $page);
-//            ->skip($limit)
-//            ->take($length)
-//            ->get();
+//            ->paginate($length, ['*'], 'page', $page);
+            ->skip($limit)
+            ->take($length)
+            ->get();
         return WallpapersResource::collection($wallpapers);
     }
 
@@ -50,7 +50,10 @@ class V0Controller extends Controller
         return (new WallpapersResource($wallpaper))->resolve();
     }
 
-    public function getWallpapersByCriteria($isBlock, $orderBy, $random = false, $page = 1, $length = 20) {
+    public function getWallpapersByCriteria($isBlock, $orderBy, $random = false) {
+        $page_limit = 12;
+        $page = $_GET['page'] ?? 1;
+        $limit = ($page-1) * $page_limit;
         $domain = getDomain();
         $query = $domain
             ->getWallpaper($isBlock)
@@ -61,11 +64,10 @@ class V0Controller extends Controller
         } else {
             $query = $query->orderByDesc($orderBy);
         }
-        $limit= ($page-1) * $length ;
         return [
             $query
-                ->paginate($length, ['*'], 'page', $page),
-//                ->skip($limit)->take($length)->get(),
+//                ->paginate($length, ['*'], 'page', $page),
+                ->skip($limit)->take($page_limit)->get(),
             $domain
         ];
     }
