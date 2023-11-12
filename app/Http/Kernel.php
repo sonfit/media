@@ -63,11 +63,8 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'userCheck' => \App\Http\Middleware\CheckUserStatus::class,
-//        'permission' => \App\Http\Middleware\AdminAuthorizeMiddleware::class,
         'DemoMode' => \App\Http\Middleware\DemoMode::class,
         'Maintenance' => \App\Http\Middleware\Maintenance::class,
         'checkAppUrl' => \App\Http\Middleware\CheckAppUrl::class,
-//        'redirect.to.show.direct' => \App\Http\Middleware\RedirectToShowDirect::class,
     ];
 }

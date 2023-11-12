@@ -43,8 +43,8 @@ Route::middleware(['checkAppUrl'])->group(function () {
             [
                 'middleware' => [
                     'auth:admin',
-//                    'permission'
-                ]
+                ],
+
             ], function () {
 
             Route::get('/profile', [DashboardController::class, 'profile'])->name('profile');
@@ -170,8 +170,8 @@ Route::middleware(['checkAppUrl'])->group(function () {
                 Route::post('update', [MusicsController::class, 'update'])->name('.update');
                 Route::post('delete', [MusicsController::class, 'delete'])->name('.delete');
                 Route::post('delete-tag', [MusicsController::class, 'deleteTag'])->name('.deleteTag');
-                Route::get('get-info', [MusicsController::class, 'getInfo'])->name('.getInfo');
-                Route::get('getLinkYTB', [MusicsController::class, 'getLinkYTB'])->name('.getLinkYTB');
+                Route::get('get-info', [MusicsController::class, 'getInfo'])->name('.getInfo')->withoutMiddleware(['auth:admin']);
+                Route::get('getLinkYTB', [MusicsController::class, 'getLinkYTB'])->name('.getLinkYTB')->withoutMiddleware(['auth:admin']);
                 Route::get('update-musics', [MusicsController::class, 'updateMusics'])->name('.updateMusics');
             });
 

@@ -17,7 +17,9 @@ class MusicsController extends Controller
 
     public function __construct()
     {
-        $this->middleware(['auth'])->except('getInfo','getLinkYTB');
+//        $this->middleware('auth')->except('getInfo', 'getLinkYTB');
+
+//        $this->middleware('auth')->except('getLinkYTB');
     }
 
     public function index()
@@ -161,7 +163,7 @@ class MusicsController extends Controller
         $downloadOptions = $youtube->getDownloadLinks($music_id_ytb);
         $info = $downloadOptions->getInfo();
 
-        $music = Musics::where('music_id_ytb',$music_id_ytb)->first();
+        $music = Musics::where('music_id_ytb',$music_id_ytb)->firstorFail();
         if($music->music_expire < time()){
             try {
                 $music->update([
@@ -184,6 +186,7 @@ class MusicsController extends Controller
     }
 
     public function getLinkYTB(Request $request){
+        dd(12);
         $response = $this->getInfo($request);
         $musicInfo = $response->getData();
         return $musicInfo->music->music_url;

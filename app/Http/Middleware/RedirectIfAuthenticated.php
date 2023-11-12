@@ -22,10 +22,11 @@ class RedirectIfAuthenticated
         if(Auth::guard($guard)->check()){
             if($guard == 'admin'){
                 return redirect()->route('admin.dashboard');
-            }else{
-                return redirect()->route('user.dashboard_user.home');
             }
         }
+//        if (Auth::guard($guard)->check()) {
+//            return redirect()->route('admin.dashboard');
+//        }
 
         return $next($request);
     }
