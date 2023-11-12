@@ -333,7 +333,8 @@ class V4Controller extends Controller
         $is_block = checkBlockIp() ? 0 : 1;
 
         $categories = $this->categoriesMusic($domain,$request);
-        $slide = $this->categoriesMusic($domain,$request);
+//        $slide = $this->categoriesMusic($domain,$request);
+        $slide = $this->getMusicsByCriteria($domain,$request, $is_block,'id',true);
         $recently_songs = $this->getRecentlySongs($get_data);
         $trending_songs = $this->getMusicsByCriteria($domain,$request, $is_block, 'music_view_count');
         $popular_songs = $this->getMusicsByCriteria($domain,$request, $is_block, 'music_like_count');
