@@ -332,11 +332,11 @@ class V4Controller extends Controller
         $domain = getDomain();
         $is_block = checkBlockIp() ? 0 : 1;
 
-        $categories = $this->categoriesMusic($domain);
-        $slide = $this->getMusicsByCriteria($domain, $is_block,'id',true);
+        $categories = $this->categoriesMusic($domain,$request);
+        $slide = $this->getMusicsByCriteria($domain,$request, $is_block,'id',true);
         $recently_songs = $this->getRecentlySongs($get_data);
-        $trending_songs = $this->getMusicsByCriteria($domain, $is_block, 'music_view_count');
-        $popular_songs = $this->getMusicsByCriteria($domain, $is_block, 'music_like_count');
+        $trending_songs = $this->getMusicsByCriteria($domain,$request, $is_block, 'music_view_count');
+        $popular_songs = $this->getMusicsByCriteria($domain,$request, $is_block, 'music_like_count');
 
         $category = $this->createSection('category', 'Category', 'category', CategoriesMusicsResource::collection($categories));
         $popular = $this->createSection('popular_songs', 'Popular Songs', 'song', MusicsResource::collection($popular_songs));
@@ -388,9 +388,9 @@ class V4Controller extends Controller
             ->paginate($length, ['*'], 'page', $page);
     }
 
-    private function getMusicsByCriteria($domain, $isBlock, $orderBy = 'id', $random = false){
+    private function getMusicsByCriteria($domain, $request, $isBlock, $orderBy = 'id', $random = false){
         $length = 10;
-        $page = 1;
+        $page = $request['page'] ?? 1;
 
         $query = $domain
             ->getMusic($isBlock)
@@ -425,10 +425,10 @@ class V4Controller extends Controller
         ];
         return response()->json($data);
     }
-    public function latest_songs(){
+    public function latest_songs(Request $request){
         $domain = getDomain();
         $is_block = checkBlockIp() ? 0 : 1;
-        $latest_songs = $this->getMusicsByCriteria($domain,$is_block);
+        $latest_songs = $this->getMusicsByCriteria($domain,$request,$is_block);
         $data = [
             'ONLINE_MP3_APP' => MusicsResource::collection($latest_songs),
             "total_records" => $latest_songs->total(),
