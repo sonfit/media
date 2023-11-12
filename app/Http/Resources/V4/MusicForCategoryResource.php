@@ -19,7 +19,7 @@ class MusicForCategoryResource extends JsonResource
             'slider_title' => $this->music_title,
             'slider_info' => $this->music_title,
             'songs_ids' => "",
-            'slider_image' => $this->music_thumbnail_link ,
+            'slider_image' => $this->music_thumb ,
         ];
     }
 }
