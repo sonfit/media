@@ -71,7 +71,7 @@ Route::group([
     //===================== WALLPAPERS ===============================
     Route::get('admob',[V4Controller::class, 'admob']);
     Route::get('settings',[V4Controller::class, 'settings']);
-    Route::get('home',[V4Controller::class, 'home']);
+//    Route::get('home',[V4Controller::class, 'home']);
     Route::get('categories',[V4Controller::class, 'categories']);
 
     Route::get('wallpaper',[V4Controller::class, 'wallpaper']);
