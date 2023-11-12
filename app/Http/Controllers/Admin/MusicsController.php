@@ -186,7 +186,6 @@ class MusicsController extends Controller
     }
 
     public function getLinkYTB(Request $request){
-        dd(12);
         $response = $this->getInfo($request);
         $musicInfo = $response->getData();
         return $musicInfo->music->music_url;
