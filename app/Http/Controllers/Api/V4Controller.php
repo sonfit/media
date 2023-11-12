@@ -437,4 +437,26 @@ class V4Controller extends Controller
         return response()->json($data);
     }
 
+    public function home_collections(Request $request){
+        $get_data = $this->checkSignSalt($_POST['data']);
+        $domain = getDomain();
+        $is_block = checkBlockIp() ? 0 : 1;
+        $getResource = [];
+        switch ($get_data['id']) {
+            case 'category':
+                $getResource = CategoryMusicsResource::collection($this->categoriesMusic($domain,$request));
+                break;
+            case 'popular_songs':
+                $getResource =  MusicsResource::collection($this->getMusicsByCriteria($domain,$request, $is_block, 'music_like_count'));
+                break;
+        }
+
+        $data = [
+            'ONLINE_MP3_APP' => $getResource,
+            "total_records" => $getResource->total(),
+            "status_code" => 200
+        ];
+        return response()->json($data);
+    }
+
 }
