@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V4\CategoriesMusicsResource;
 use App\Http\Resources\V4\CategoriesResource;
+use App\Http\Resources\V4\CategoryMusicsResource;
 use App\Http\Resources\V4\MusicForCategoryResource;
 use App\Http\Resources\V4\MusicsResource;
 use App\Http\Resources\V4\WallpapersResource;
@@ -418,7 +419,7 @@ class V4Controller extends Controller
         $domain = getDomain();
         $categories = $this->categoriesMusic($domain);
         $data = [
-            'ONLINE_MP3_APP' => CategoriesMusicsResource::collection($categories),
+            'ONLINE_MP3_APP' => CategoryMusicsResource::collection($categories),
             "total_records" => $categories->total(),
             "status_code" => 200
         ];
