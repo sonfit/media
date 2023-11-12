@@ -4,7 +4,7 @@ namespace App\Http\Resources\V4;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CategoriesMusicsResource extends JsonResource
+class CategoryMusicsResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,10 +15,10 @@ class CategoriesMusicsResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'post_id' => $this->id,
-            'post_type' => 'category',
-            'post_title' => $this->category_name ,
-            'post_image' => $this->category_image ?  asset('storage/domains/'.$this->domain_id.'/categories/'.$this->category_image) : asset('storage/defaultCate.png'),
+            'category_id' => $this->id,
+            'type' => 'category',
+            'category_name' => $this->category_name ,
+            'category_image' => $this->category_image ?  asset('storage/sites/'.$this->site_id.'/categories/'.$this->category_image) : asset('storage/default.png') ,
         ];
     }
 }
