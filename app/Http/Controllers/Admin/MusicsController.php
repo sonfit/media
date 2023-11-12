@@ -207,6 +207,7 @@ class MusicsController extends Controller
                         'music_url' =>  $downloadOptions->getFirstCombinedFormat()->url,
                         'music_thumb' =>   $info->getThumbnail()[0]['url'],
                         'music_expire' =>   $this->getValueFromUrl($downloadOptions->getFirstCombinedFormat()->url,'expire'),
+                        'music_lengthSeconds' => $info->getLengthSeconds(),
                         'music_status' => 1,
                     ];
             }
