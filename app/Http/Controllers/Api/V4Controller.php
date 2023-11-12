@@ -489,8 +489,7 @@ class V4Controller extends Controller
         return response()->json($data);
     }
 
-    public function song_view(Request $request){
-
+    public function song_view(){
         $get_data = $this->checkSignSalt($_POST['data']);
         $song_id = $get_data['post_id'];
         $musics = Musics::findOrFail($song_id);
