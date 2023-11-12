@@ -17,7 +17,7 @@ class MusicsController extends Controller
 
     public function __construct()
     {
-        $this->middleware(['auth'])->except('getInfo');
+        $this->middleware(['auth'])->except('getInfo','getLinkYTB');
     }
 
     public function index()
