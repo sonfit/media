@@ -171,7 +171,7 @@ Route::middleware(['checkAppUrl'])->group(function () {
                 Route::post('delete', [MusicsController::class, 'delete'])->name('.delete');
                 Route::post('delete-tag', [MusicsController::class, 'deleteTag'])->name('.deleteTag');
                 Route::get('get-info', [MusicsController::class, 'getInfo'])->name('.getInfo')->withoutMiddleware(['auth:admin']);
-                Route::get('getLinkYTB', [MusicsController::class, 'getLinkYTB'])->name('.getLinkYTB')->withoutMiddleware(['auth:admin']);
+                Route::get('redirect-link', [MusicsController::class, 'redirectLinkYTB'])->name('.redirectLinkYTB')->withoutMiddleware(['auth:admin']);
                 Route::get('update-musics', [MusicsController::class, 'updateMusics'])->name('.updateMusics');
             });
 

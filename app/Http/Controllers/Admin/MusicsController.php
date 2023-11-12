@@ -17,9 +17,7 @@ class MusicsController extends Controller
 
     public function __construct()
     {
-//        $this->middleware('auth')->except('getInfo', 'getLinkYTB');
-
-//        $this->middleware('auth')->except('getLinkYTB');
+        $this->middleware('auth')->except('getInfo', 'redirectLinkYTB');
     }
 
     public function index()
@@ -185,10 +183,10 @@ class MusicsController extends Controller
         ]);
     }
 
-    public function getLinkYTB(Request $request){
+    public function redirectLinkYTB(Request $request){
         $response = $this->getInfo($request);
         $musicInfo = $response->getData();
-        return $musicInfo->music->music_url;
+        return redirect($musicInfo->music->music_url);
     }
 
     public function updateMusics(YouTubeDownloader $youtube){
