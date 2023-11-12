@@ -16,10 +16,10 @@ class MusicForCategoryResource extends JsonResource
     {
         return [
             'slider_id' => $this->id,
-            'slider_title' => $this->music_title,
-            'slider_info' => $this->music_title,
+            'slider_title' => $this->category_name,
+            'slider_info' => $this->category_name,
             'songs_ids' => "",
-            'slider_image' => $this->music_thumb ,
+            'slider_image' => $this->category_image ,
         ];
     }
 }

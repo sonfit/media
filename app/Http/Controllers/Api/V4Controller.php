@@ -333,7 +333,7 @@ class V4Controller extends Controller
         $is_block = checkBlockIp() ? 0 : 1;
 
         $categories = $this->categoriesMusic($domain,$request);
-        $slide = $this->getMusicsByCriteria($domain,$request, $is_block,'id',true);
+        $slide = $this->categoriesMusic($domain,$request);
         $recently_songs = $this->getRecentlySongs($get_data);
         $trending_songs = $this->getMusicsByCriteria($domain,$request, $is_block, 'music_view_count');
         $popular_songs = $this->getMusicsByCriteria($domain,$request, $is_block, 'music_like_count');
@@ -440,6 +440,21 @@ class V4Controller extends Controller
     public function trending_songs(Request $request){
         $domain = getDomain();
         $is_block = checkBlockIp() ? 0 : 1;
+        $trending_songs = $this->getMusicsByCriteria($domain,$request, $is_block, 'music_view_count');
+        $data = [
+            'ONLINE_MP3_APP' => MusicsResource::collection($trending_songs),
+            "total_records" => $trending_songs->total(),
+            "status_code" => 200
+        ];
+        return response()->json($data);
+    }
+
+    public function home_slider_songs(Request $request){
+        $domain = getDomain();
+        $is_block = checkBlockIp() ? 0 : 1;
+        $get_data = $this->checkSignSalt($_POST['data']);
+        dd($get_data,$request->all());
+
         $trending_songs = $this->getMusicsByCriteria($domain,$request, $is_block, 'music_view_count');
         $data = [
             'ONLINE_MP3_APP' => MusicsResource::collection($trending_songs),
