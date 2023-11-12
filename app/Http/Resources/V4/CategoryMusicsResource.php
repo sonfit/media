@@ -18,7 +18,7 @@ class CategoryMusicsResource extends JsonResource
             'category_id' => $this->id,
             'type' => 'category',
             'category_name' => $this->category_name ,
-            'category_image' => $this->category_image ?  asset('storage/sites/'.$this->site_id.'/categories/'.$this->category_image) : asset('storage/default.png') ,
+            'category_image' => $this->category_image ?  asset('storage/domains/'.$this->domain_id.'/categories/'.$this->category_image) : asset('storage/defaultCate.png') ,
         ];
     }
 }
