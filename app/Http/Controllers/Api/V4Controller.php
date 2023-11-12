@@ -337,8 +337,6 @@ class V4Controller extends Controller
         $trending_songs = $this->getMusicsByCriteria($domain, $is_block, 'music_view_count');
         $popular_songs = $this->getMusicsByCriteria($domain, $is_block, 'music_like_count');
 
-
-
         $category = $this->createSection('category', 'Category', 'category', CategoriesMusicsResource::collection($categories));
         $popular = $this->createSection('popular_songs', 'Popular Songs', 'song', MusicsResource::collection($popular_songs));
 
@@ -379,13 +377,14 @@ class V4Controller extends Controller
     }
 
     private function categoriesMusic($domain, $length = 10){
+        $page = $get_method['page'] ?? 1;
         $isBlock = checkBlockIp() ? 0 : 1;
         return $domain->categories()
             ->where('category_checked_ip', $isBlock)
             ->withCount('musics')
             ->having('musics_count', '>', 0)
             ->inRandomOrder()
-            ->paginate($length);
+            ->paginate($length, ['*'], 'page', $page);
     }
 
     private function getMusicsByCriteria($domain, $isBlock, $orderBy = 'id', $random = false){
@@ -403,6 +402,38 @@ class V4Controller extends Controller
         }
 
         return $query->paginate($length, ['*'], 'page', $page);
+    }
+
+    public function home_recently_songs(){
+        $get_data = $this->checkSignSalt($_POST['data']);
+        $recently_songs = $this->getRecentlySongs($get_data);
+        $data = [
+            'ONLINE_MP3_APP' => $recently_songs,
+            "status_code" => 200
+        ];
+        return response()->json($data);
+    }
+
+    public function getCategoriesMusic(){
+        $domain = getDomain();
+        $categories = $this->categoriesMusic($domain);
+        $data = [
+            'ONLINE_MP3_APP' => CategoriesMusicsResource::collection($categories),
+            "total_records" => $categories->total(),
+            "status_code" => 200
+        ];
+        return response()->json($data);
+    }
+    public function latest_songs(){
+        $domain = getDomain();
+        $is_block = checkBlockIp() ? 0 : 1;
+        $latest_songs = $this->getMusicsByCriteria($domain,$is_block);
+        $data = [
+            'ONLINE_MP3_APP' => MusicsResource::collection($latest_songs),
+            "total_records" => $latest_songs->total(),
+            "status_code" => 200
+        ];
+        return response()->json($data);
     }
 
 }

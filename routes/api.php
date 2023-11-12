@@ -91,7 +91,7 @@ Route::group([
     Route::post('/song_by_category', [V4Controller::class, 'song_by_category']);
     Route::post('/home_slider_songs', [V4Controller::class, 'home_slider_songs']);
     Route::post('/home_recently_songs', [V4Controller::class, 'home_recently_songs']);
-    Route::post('/category', [V4Controller::class, 'category']);
+    Route::post('/category', [V4Controller::class, 'getCategoriesMusic']);
     Route::post('/all_musics', [V4Controller::class, 'all_musics']);
     Route::post('/latest_songs', [V4Controller::class, 'latest_songs']);
     Route::post('/song_view', [V4Controller::class, 'song_view']);
