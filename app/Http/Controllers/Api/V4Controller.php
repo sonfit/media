@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V4\CategoriesMusicsResource;
 use App\Http\Resources\V4\CategoriesResource;
+use App\Http\Resources\V4\MusicForCategoryResource;
 use App\Http\Resources\V4\MusicsResource;
 use App\Http\Resources\V4\WallpapersResource;
 use App\Models\Categories;
@@ -330,12 +331,13 @@ class V4Controller extends Controller
         $domain = getDomain();
         $is_block = checkBlockIp() ? 0 : 1;
 
-        $slide = $this->getMusicsByCriteria($domain, $is_block);
+        $categories = $this->categoriesMusic($domain);
+        $slide = $this->getMusicsByCriteria($domain, $is_block,'id',true);
         $recently_songs = $this->getRecentlySongs($get_data);
         $trending_songs = $this->getMusicsByCriteria($domain, $is_block, 'music_view_count');
         $popular_songs = $this->getMusicsByCriteria($domain, $is_block, 'music_like_count');
 
-        $categories = $this->categoriesMusic($domain);
+
 
         $category = $this->createSection('category', 'Category', 'category', CategoriesMusicsResource::collection($categories));
         $popular = $this->createSection('popular_songs', 'Popular Songs', 'song', MusicsResource::collection($popular_songs));
@@ -344,7 +346,7 @@ class V4Controller extends Controller
 
         $data = [
             'ONLINE_MP3_APP' => [
-                'slider' => MusicsResource::collection($slide),
+                'slider' => MusicForCategoryResource::collection($slide),
                 'recently_songs' => $recently_songs,
                 'trending_songs' => MusicsResource::collection($trending_songs),
                 'popular_songs' => MusicsResource::collection($popular_songs),

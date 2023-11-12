@@ -17,9 +17,9 @@ class MusicsResource extends JsonResource
         return [
             'song_id' => $this->id,
             'song_title' =>($this->music_title),
-            'song_image' => $this->music_thumb ,
-            'song_info' =>  ($this->music_title) ,
-            'song_lyrics' => ($this->music_lyrics) ,
+            'song_image' => $this->music_thumb,
+            'song_info' =>  $this->music_title,
+            'song_lyrics' => $this->music_lyrics,
             'song_type' => 'local' ,
             'song_url' => route('admin.musics.getLinkYTB',['music_id_ytb'=>$this->music_id_ytb]) ,
             'views' => $this->music_view_count ,
