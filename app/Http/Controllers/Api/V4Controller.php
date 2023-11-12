@@ -252,10 +252,9 @@ class V4Controller extends Controller
         $this->checkSignSalt($_POST['data']);
         $domain = getDomain();
         domainLogin($domain);
+        $app_name = $domain->domain_name;
 
-        $app_name = $domain->site_app_name;
-
-        $app_package_name = $domain->site_package ?? "com.zxcv.onlinemp3";
+        $app_package_name =  "";
         $ads = json_decode($domain->manage_ads, true);
         $status_ads = $domain->ad_switch;
 
@@ -318,7 +317,8 @@ class V4Controller extends Controller
             'song_download' => "true",
             'ads_list' => $ads,
             'page_list' => $page_list,
-            'success' => '1');
+            'success' => '1'
+        );
 
         return \Response::json(array(
             'ONLINE_MP3_APP' => $response,
