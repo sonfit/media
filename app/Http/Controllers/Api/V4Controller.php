@@ -377,8 +377,8 @@ class V4Controller extends Controller
         return [];
     }
 
-    private function categoriesMusic($domain, $length = 10){
-        $page = $get_method['page'] ?? 1;
+    private function categoriesMusic($domain,$request, $length = 10){
+        $page = $request['page'] ?? 1;
         $isBlock = checkBlockIp() ? 0 : 1;
         return $domain->categories()
             ->where('category_checked_ip', $isBlock)
@@ -415,9 +415,9 @@ class V4Controller extends Controller
         return response()->json($data);
     }
 
-    public function getCategoriesMusic(){
+    public function getCategoriesMusic(Request $request){
         $domain = getDomain();
-        $categories = $this->categoriesMusic($domain);
+        $categories = $this->categoriesMusic($domain,$request);
         $data = [
             'ONLINE_MP3_APP' => CategoryMusicsResource::collection($categories),
             "total_records" => $categories->total(),
