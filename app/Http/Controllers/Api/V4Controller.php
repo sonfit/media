@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\V4\CategoriesMusicsResource;
 use App\Http\Resources\V4\CategoriesResource;
+use App\Http\Resources\V4\MusicsResource;
 use App\Http\Resources\V4\WallpapersResource;
 use App\Models\Categories;
+use App\Models\Musics;
 use Illuminate\Http\Request;
 
 class V4Controller extends Controller
@@ -206,6 +209,198 @@ class V4Controller extends Controller
             'total' => $wallpapers->total(),
             'data' => WallpapersResource::collection($wallpapers),
         ];
+    }
+
+
+    //======================== MUSICS ===============================
+
+    function checkSignSalt($data_info){
+        $key = "viaviweb";
+        $data_json = $data_info;
+        $data_arr = json_decode(urldecode(base64_decode($data_json)), true);
+
+        if (!isset($data_arr['sign']) || !isset($data_arr['salt'])) {
+            return $this->respondWithErrorMessage("Invalid sign salt.");
+        }
+
+        $md5_salt = md5($key . $data_arr['salt']);
+
+        if ($data_arr['sign'] != $md5_salt) {
+            return $this->respondWithErrorMessage("Invalid sign salt.");
+        }
+        return $data_arr;
+    }
+
+    function respondWithErrorMessage($message) {
+        $response = [
+            'ONLINE_MP3_APP' => [
+                [
+                    'success' => -1,
+                    'MSG' => $message
+                ]
+            ]
+        ];
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        exit();
+    }
+
+    public function app_details()
+    {
+        $this->checkSignSalt($_POST['data']);
+        $domain = getDomain();
+        domainLogin($domain);
+
+        $app_name = $domain->site_app_name;
+
+        $app_package_name = $domain->site_package ?? "com.zxcv.onlinemp3";
+        $ads = json_decode($domain->manage_ads, true);
+        $status_ads = $domain->ad_switch;
+
+        $ads[] = [
+            "ad_id" => 1,
+            "ads_name" => "Admob",
+            'ads_info' => [
+                'publisher_id' => ($ads && $ads['app_id']) ? $ads['app_id'] : '',
+                'banner_on_off' => $status_ads,
+                'banner_id' => ($ads && $ads['banner_ads_id']) ? $ads['banner_ads_id'] : '',
+                'interstitial_on_off' => $status_ads,
+                'native_on_off' => $status_ads,
+                'interstitial_id' => ($ads && $ads['interstitial_ads_id']) ? $ads['interstitial_ads_id'] : '',
+                'native_id' => ($ads && $ads['native_ads_id']) ? $ads['native_ads_id'] : '',
+                'interstitial_clicks' => 5,
+                'native_position' => 5,
+            ],
+            'status' => 'true',
+        ];
+        $page_list = [
+            [
+                'page_id' => 1,
+                'page_title' => 'About Us',
+                'page_content' => 'About Us',
+            ],
+
+            [
+                'page_id' => 2,
+                'page_title' => 'Terms Of Use',
+                'page_content' => 'Terms Of Use',
+            ],
+            [
+                'page_id' => 3,
+                'page_title' => 'Privacy Policy',
+                'page_content' => '',
+            ],
+
+        ];
+
+        $response[] = array(
+            'app_package_name' => $app_package_name,
+            'app_name' => $app_name,
+            "app_email" => "info@" . $domain->domain_web,
+//            'app_logo' => 'https://' . getDomain() . '/storage/sites/' . $site->id . '/' . $site->site_image,
+            "app_company" => $app_name,
+            "app_website" => $domain->domain_web,
+            "app_contact" => "",
+            'facebook_link' => 'https://facebook.com',
+            'twitter_link' => "https://twitter.com",
+            'instagram_link' => "https://instagram.com",
+            'youtube_link' => "https://youtube.com",
+            'google_play_link' => "",
+            'apple_store_link' => "#ap",
+            'app_version' => "",
+            'app_update_hide_show' => false,
+            'app_update_version_code' => "",
+            'app_update_desc' => "Please update new app",
+            'app_update_link' => "",
+            'app_update_cancel_option' => "true",
+            'song_download' => "true",
+            'ads_list' => $ads,
+            'page_list' => $page_list,
+            'success' => '1');
+
+        return \Response::json(array(
+            'ONLINE_MP3_APP' => $response,
+            'status_code' => 200
+        ));
+    }
+
+    public function homeMusics(Request $request)
+    {
+        $get_data = $this->checkSignSalt($request->input('data'));
+        $domain = getDomain();
+        $is_block = checkBlockIp() ? 0 : 1;
+
+        $slide = $this->getMusicsByCriteria($domain, $is_block);
+        $recently_songs = $this->getRecentlySongs($get_data);
+        $trending_songs = $this->getMusicsByCriteria($domain, $is_block, 'music_view_count');
+        $popular_songs = $this->getMusicsByCriteria($domain, $is_block, 'music_like_count');
+
+        $categories = $this->categoriesMusic($domain);
+
+        $category = $this->createSection('category', 'Category', 'category', CategoriesMusicsResource::collection($categories));
+        $popular = $this->createSection('popular_songs', 'Popular Songs', 'song', MusicsResource::collection($popular_songs));
+
+        $home_sections = [$category, $popular];
+
+        $data = [
+            'ONLINE_MP3_APP' => [
+                'slider' => MusicsResource::collection($slide),
+                'recently_songs' => $recently_songs,
+                'trending_songs' => MusicsResource::collection($trending_songs),
+                'popular_songs' => MusicsResource::collection($popular_songs),
+                'home_sections' => $home_sections
+            ],
+            "status_code" => 200,
+        ];
+
+        return response()->json($data);
+    }
+
+    private function createSection($id, $title, $type, $content)
+    {
+        return [
+            'home_id' => $id,
+            'home_title' => $title,
+            'home_type' => $type,
+            'home_content' => $content,
+        ];
+    }
+
+    private function getRecentlySongs($get_data)
+    {
+        if (isset($get_data['songs_ids'])) {
+            $songs_ids = explode(',', $get_data['songs_ids']);
+            $musics = Musics::whereIn('id', $songs_ids)->get();
+            return MusicsResource::collection($musics);
+        }
+        return [];
+    }
+
+    private function categoriesMusic($domain, $length = 10){
+        $isBlock = checkBlockIp() ? 0 : 1;
+        return $domain->categories()
+            ->where('category_checked_ip', $isBlock)
+            ->withCount('musics')
+            ->having('musics_count', '>', 0)
+            ->inRandomOrder()
+            ->paginate($length);
+    }
+
+    private function getMusicsByCriteria($domain, $isBlock, $orderBy = 'id', $random = false){
+        $length = 10;
+        $page = 1;
+
+        $query = $domain
+            ->getMusic($isBlock)
+            ->where('music_status', 1);
+
+        if ($random) {
+            $query = $query->inRandomOrder();
+        } else {
+            $query = $query->orderByDesc($orderBy);
+        }
+
+        return $query->paginate($length, ['*'], 'page', $page);
     }
 
 }

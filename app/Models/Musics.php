@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 class Musics extends Model
 {
-    use HasFactory;
+    use HasFactory,HasRelationships;
     protected $guarded = [];
 
     public static function booted()

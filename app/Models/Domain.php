@@ -101,7 +101,31 @@ class Domain extends Model
 
     public function musics()
     {
-        return $this->hasManyDeepFromRelations($this->tags(), (new Tags)->musics())->distinct();
+        return $this->hasManyDeepFromRelations($this->tags(), (new Tags)->musics())
+            ->with(['tags' => function ($query) {
+                $tagIds = $this->tags()->pluck('tags.id');
+                $query->whereIn('tags.id', $tagIds);
+            }])->groupBy('musics.id');
+    }
+    public function getMusic($isBlock){
+        return $this->musics()
+            ->whereHas('categories', function($query) use ($isBlock) {
+                $query->where([
+                    ['category_checked_ip', '=', $isBlock],
+                    ['domain_id', '=', $this->id]
+                ]);
+            })
+            ->with([
+                'categories' => function($query) use ($isBlock) {
+                    $query->where([
+                        ['category_checked_ip', '=', $isBlock],
+                        ['domain_id', '=', $this->id]
+                    ]);
+                },
+                'tags' => function ($query) use ($isBlock) {
+                    $tagIds = $this->categories()->where('category_checked_ip', $isBlock)->first()->tags()->pluck('tags.id');
+                    $query->whereIn('tags.id', $tagIds);
+                }]);
     }
 
 }

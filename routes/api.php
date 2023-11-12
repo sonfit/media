@@ -32,17 +32,13 @@ Route::post('/get-domains-by-user', [ApiController::class, 'getDomainsbyUser'])-
 
 Route::group([], function() {
     Route::get('/categories', [V0Controller::class, 'categories']);
-
     Route::get('/categories/{category_id}/wallpapers', [V0Controller::class, 'wallpapersByCategory']);
     Route::get('/wallpaper-detail/{id}/{device_id?}', [V0Controller::class, 'wallpaper']);
-
     Route::get('/wallpapers/featured', [V0Controller::class, 'getFeatured']);
     Route::get('/wallpapers/popular', [V0Controller::class, 'getPopularity']);
     Route::get('/wallpapers/newest', [V0Controller::class, 'getNewest']);
-
     Route::post('/wallpaper-favorite', [V0Controller::class, 'likeWallpaper']);
     Route::post('/wallpaper-favorite-unsaved', [V0Controller::class, 'disLikeWallpaper']);
-
     Route::get('/favorite/{device_id?}', [V0Controller::class, 'getSaved']);
 
     //Ringtones
@@ -51,25 +47,13 @@ Route::group([], function() {
     Route::get('ringtones/newest/{deviceId?}', [V0Controller::class, 'getNewestRingtones']);
     Route::get('ringtones/popular/{deviceId?}', [V0Controller::class, 'getPopularityRingtones']);
     Route::get('ringtones/most-download/{deviceId?}', [V0Controller::class, 'getMostDownloadRingtones']);
-
     Route::get('/categories/popular', [V0Controller::class, 'categories']);
-
     Route::get('categories/{category_id}/ringtones/{deviceId?}', [V0Controller::class, 'ringtonesByCategory']);
-//
     Route::get('ringtone-detail/{id}/{device_id?}', [V0Controller::class, 'ringtone']);
-
     Route::post('search', [V0Controller::class, 'searchRingtones']);
-
-
-////    Route::get('ringtones/premium', [RingtonesController::class, 'getPremium']);
-
-//
-//
     Route::post('ringtone-favorite/', [V0Controller::class, 'likeRingtone']);
     Route::post('ringtone-favorite-unsaved/', [V0Controller::class, 'dislikeRingtone']);
 
-
-//    Route::post('search', [SearchController::class, 'search']);
 
 
 });
@@ -83,6 +67,8 @@ Route::group([
 Route::group([
     "prefix" => "v4",
 ], function() {
+
+    //===================== WALLPAPERS ===============================
     Route::get('admob',[V4Controller::class, 'admob']);
     Route::get('settings',[V4Controller::class, 'settings']);
     Route::get('home',[V4Controller::class, 'home']);
@@ -96,6 +82,24 @@ Route::group([
     Route::get('wallpaper/cid',[V4Controller::class, 'cid']);
     Route::get('wallpaper/hashtag',[V4Controller::class, 'hashtag']);
     Route::get('add/show/wallpaper',[V4Controller::class, 'viewWallpaper']);
+
+    //===================== MUSICS ===============================
+    Route::post('/app_details', [V4Controller::class, 'app_details']);
+    Route::post('/home', [V4Controller::class, 'homeMusics']);
+    Route::post('/home_collections', [V4Controller::class, 'home_collections']);
+    Route::post('/trending_songs', [V4Controller::class, 'trending_songs']);
+    Route::post('/song_by_category', [V4Controller::class, 'song_by_category']);
+    Route::post('/home_slider_songs', [V4Controller::class, 'home_slider_songs']);
+    Route::post('/home_recently_songs', [V4Controller::class, 'home_recently_songs']);
+    Route::post('/category', [V4Controller::class, 'category']);
+    Route::post('/all_musics', [V4Controller::class, 'all_musics']);
+    Route::post('/latest_songs', [V4Controller::class, 'latest_songs']);
+    Route::post('/song_view', [V4Controller::class, 'song_view']);
+    Route::post('/song_download', [V4Controller::class, 'song_download']);
+    Route::post('/song_favourite', [V4Controller::class, 'song_favourite']);
+    Route::post('/user_favourite_songs', [V4Controller::class, 'user_favourite_songs']);
+    Route::post('/search', [V4Controller::class, 'search']);
+    Route::post('/search_single', [V4Controller::class, 'search_single']);
 });
 
 Route::group([

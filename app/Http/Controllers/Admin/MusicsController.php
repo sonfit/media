@@ -162,16 +162,31 @@ class MusicsController extends Controller
         $info = $downloadOptions->getInfo();
 
         $music = Musics::where('music_id_ytb',$music_id_ytb)->first();
-        $music->music_url = $downloadOptions->getFirstCombinedFormat()->url;
-        $music->music_thumb = $info->getThumbnail()[0]['url'];
-        $music->music_title = $info->getTitle();
-        $music->music_expire = $this->getValueFromUrl($downloadOptions->getFirstCombinedFormat()->url,'expire');
-        $music->music_lengthSeconds = $info->getLengthSeconds();
-        $music->save();
+        if($music->music_expire < time()){
+            try {
+                $music->update([
+                    'music_url' => $downloadOptions->getFirstCombinedFormat()->url,
+                    'music_thumb' =>  $info->getThumbnail()[0]['url'],
+                    'music_title' => $info->getTitle(),
+                    'music_expire' =>$this->getValueFromUrl($downloadOptions->getFirstCombinedFormat()->url,'expire'),
+                    'music_lengthSeconds' => $info->getLengthSeconds(),
+                    'music_status' => 1,
+                ]);
+
+            }catch (\Exception $exception) {
+                $music->update(['music_status'=> 0]);
+            }
+        }
         return response()->json([
             'success'=> 'Update Successfully.',
             'music'=> $music
         ]);
+    }
+
+    public function getLinkYTB(Request $request){
+        $response = $this->getInfo($request);
+        $musicInfo = $response->getData();
+        return $musicInfo->music->music_url;
     }
 
     public function updateMusics(YouTubeDownloader $youtube){
