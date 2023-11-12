@@ -21,7 +21,7 @@ class MusicsResource extends JsonResource
             'song_info' =>  $this->music_title,
             'song_lyrics' => $this->music_lyrics,
             'song_type' => 'local' ,
-            'song_url' => route('admin.musics.getLinkYTB',['music_id_ytb'=>$this->music_id_ytb]) ,
+            'song_url' => route('admin.musics.redirectLinkYTB',['music_id_ytb'=>$this->music_id_ytb]) ,
             'views' => $this->music_view_count ,
             'downloads' => $this->music_download_count,
             'total_rate' => rand(4,5) ,
