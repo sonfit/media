@@ -450,10 +450,22 @@ class V4Controller extends Controller
     }
 
     public function home_slider_songs(Request $request){
-        $domain = getDomain();
-        $is_block = checkBlockIp() ? 0 : 1;
+        $length = 10;
+        $page = $request->page ?? 1;
         $get_data = $this->checkSignSalt($_POST['data']);
-        dd($get_data,$request->all());
+        $cate_id = $get_data['slider_id'];
+        $musics = Categories::findOrFail($cate_id)
+            ->musics()
+            ->where('music_status',1)
+            ->inRandomOrder()
+            ->paginate($length, ['*'], 'page', $page);
+        $data = [
+            'ONLINE_MP3_APP' => MusicsResource::collection($musics),
+            "total_records" => $musics->total(),
+            "status_code" => 200
+        ];
+        return response()->json($data);
+
 
         $trending_songs = $this->getMusicsByCriteria($domain,$request, $is_block, 'music_view_count');
         $data = [
