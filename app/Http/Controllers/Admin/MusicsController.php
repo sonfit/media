@@ -203,6 +203,7 @@ class MusicsController extends Controller
                 $updateMusic[] = [
                         'id' => $item->id,
                         'music_id_ytb' => $item->music_id_ytb,
+                        'music_title' => $info->getTitle(),
                         'music_url' =>  $downloadOptions->getFirstCombinedFormat()->url,
                         'music_thumb' =>   $info->getThumbnail()[0]['url'],
                         'music_expire' =>   $this->getValueFromUrl($downloadOptions->getFirstCombinedFormat()->url,'expire'),
