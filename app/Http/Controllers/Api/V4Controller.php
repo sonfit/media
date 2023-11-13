@@ -252,9 +252,7 @@ class V4Controller extends Controller
         $this->checkSignSalt($_POST['data']);
         $domain = getDomain();
         domainLogin($domain);
-        $app_name = $domain->domain_name;
 
-        $app_package_name =  "com.zxcv.onlinemp3";
         $ads = json_decode($domain->manage_ads, true);
         $status_ads = $domain->ad_switch;
 
@@ -295,20 +293,20 @@ class V4Controller extends Controller
         ];
 
         $response[] = array(
-            'app_package_name' => $app_package_name,
-            'app_name' => $app_name,
+            'app_package_name' => "com.zxcv.onlinemp3",
+            'app_name' => $domain->domain_web,
             "app_email" => "info@" . $domain->domain_web,
 //            'app_logo' => 'https://' . getDomain() . '/storage/sites/' . $site->id . '/' . $site->site_image,
-            "app_company" => $app_name,
+            "app_company" => $domain->domain_web,
             "app_website" => $domain->domain_web,
-            "app_contact" => "",
+            "app_contact" => "zxcv",
             'facebook_link' => 'https://facebook.com',
             'twitter_link' => "https://twitter.com",
             'instagram_link' => "https://instagram.com",
             'youtube_link' => "https://youtube.com",
-            'google_play_link' => "",
+            'google_play_link' => "zxcv",
             'apple_store_link' => "#ap",
-            'app_version' => "",
+            'app_version' => "1.1",
             'app_update_hide_show' => false,
             'app_update_version_code' => "",
             'app_update_desc' => "Please update new app",
