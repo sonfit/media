@@ -254,7 +254,7 @@ class V4Controller extends Controller
         domainLogin($domain);
         $app_name = $domain->domain_name;
 
-        $app_package_name =  "";
+        $app_package_name =  "com.zxcv.onlinemp3";
         $ads = json_decode($domain->manage_ads, true);
         $status_ads = $domain->ad_switch;
 
