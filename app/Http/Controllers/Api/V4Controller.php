@@ -293,7 +293,7 @@ class V4Controller extends Controller
         ];
 
         $response[] = array(
-            'app_package_name' => "com.zxcv.onlinemp3",
+            'app_package_name' => "com.vietmmonet.zxcvabcd",
             'app_name' => $domain->domain_web,
             "app_email" => "info@" . $domain->domain_web,
 //            'app_logo' => 'https://' . getDomain() . '/storage/sites/' . $site->id . '/' . $site->site_image,
