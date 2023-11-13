@@ -519,5 +519,27 @@ class V4Controller extends Controller
         ];
         return response()->json($data);
     }
+    public function song_download(){
+        $get_data = $this->checkSignSalt($_POST['data']);
+        $song_id = $get_data['post_id'];
+        $musics = Musics::findOrFail($song_id);
+        $musics->increment('music_download_count');
+        $data = [
+            'ONLINE_MP3_APP' => new MusicsResource($musics),
+            "status_code" => 200
+        ];
+        return response()->json($data);
+    }
+    public function song_favourite(){
+        $get_data = $this->checkSignSalt($_POST['data']);
+        $song_id = $get_data['post_id'];
+        $musics = Musics::findOrFail($song_id);
+        $musics->increment('music_like_count');
+        $data = [
+            'ONLINE_MP3_APP' => new MusicsResource($musics),
+            "status_code" => 200
+        ];
+        return response()->json($data);
+    }
 
 }
