@@ -464,15 +464,6 @@ class V4Controller extends Controller
             "status_code" => 200
         ];
         return response()->json($data);
-
-
-        $trending_songs = $this->getMusicsByCriteria($domain,$request, $is_block, 'music_view_count');
-        $data = [
-            'ONLINE_MP3_APP' => MusicsResource::collection($trending_songs),
-            "total_records" => $trending_songs->total(),
-            "status_code" => 200
-        ];
-        return response()->json($data);
     }
 
     public function home_collections(Request $request){
@@ -502,11 +493,13 @@ class V4Controller extends Controller
         $page = $request->page ?? 1;
         $get_data = $this->checkSignSalt($_POST['data']);
         $cate_id = $get_data['category_id'];
-        $musics = Categories::findOrFail($cate_id)
+        $category = Categories::findOrFail($cate_id);
+        $musics = $category
             ->musics()
             ->where('music_status',1)
             ->inRandomOrder()
             ->paginate($length, ['*'], 'page', $page);
+        $category->increment('category_view_count');
         $data = [
             'ONLINE_MP3_APP' => MusicsResource::collection($musics),
             "total_records" => $musics->total(),
