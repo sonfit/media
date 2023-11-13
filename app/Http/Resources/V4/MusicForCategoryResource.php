@@ -14,12 +14,15 @@ class MusicForCategoryResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
-            'slider_id' => $this->id,
-            'slider_title' => $this->category_name,
-            'slider_info' => $this->category_name,
-            'songs_ids' => "",
-            'slider_image' => $this->category_image ,
-        ];
+
+            return [
+                'slider_id' => $this->id,
+                'slider_title' => $this->category_name,
+                'slider_info' => $this->category_name,
+                'songs_ids' => "",
+                'slider_image' => $this->category_image ?  asset('storage/domains/'.$this->domain_id.'/categories/'.$this->category_image) : asset('storage/defaultCate.png'),
+            ];
+
+
     }
 }
