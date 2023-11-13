@@ -5,26 +5,7 @@
 @section('content')
     <div class="container-fluid">
         <div class="row admin-fa_icon dashboard__card">
-
-{{--            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-3">--}}
-{{--                <div class="card shadow border-right">--}}
-{{--                    <div class="card-body">--}}
-{{--                        <div class="d-flex d-lg-flex d-md-block align-items-center">--}}
-{{--                            <div>--}}
-{{--                                <div class="d-inline-flex align-items-center">--}}
-{{--                                    <h2 class="text-dark mb-1 font-weight-medium">{{number_format($user)}}</h2>--}}
-{{--                                </div>--}}
-{{--                                <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">@lang('Total Users')</h6>--}}
-{{--                            </div>--}}
-{{--                            <div class="ml-auto mt-md-3 mt-lg-0">--}}
-{{--                                <span class="opacity-7 text-muted"><i class="fa fa-users fa-2x"></i></span>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
-{{--                </div>--}}
-{{--            </div>--}}
-
-            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-3">
+            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-4">
                 <div class="card shadow border-right">
                     <div class="card-body">
                         <div class="d-flex d-lg-flex d-md-block align-items-center">
@@ -42,27 +23,25 @@
                 </div>
             </div>
 
-{{--            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-3">--}}
-{{--                <div class="card shadow border-right">--}}
-{{--                    <div class="card-body">--}}
-{{--                        <div class="d-flex d-lg-flex d-md-block align-items-center">--}}
-{{--                            <div>--}}
-{{--                                <div class="d-inline-flex align-items-center">--}}
-{{--                                    <h2 class="text-dark mb-1 font-weight-medium">{{$redirect}}</h2>--}}
-{{--                                </div>--}}
-{{--                                <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">@lang('Today redirect')</h6>--}}
-{{--                            </div>--}}
-{{--                            <div class="ml-auto mt-md-3 mt-lg-0">--}}
-{{--                                <span class="opacity-7 text-muted">--}}
-{{--                                   <span class="opacity-7 text-muted"><i class="fa fa-link fa-2x"></i></span>--}}
-{{--                                </span>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
-{{--                </div>--}}
-{{--            </div>--}}
+            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-4">
+                <div class="card shadow border-right">
+                    <div class="card-body">
+                        <div class="d-flex d-lg-flex d-md-block align-items-center">
+                            <div>
+                                <div class="d-inline-flex align-items-center">
+                                    <h2 class="text-dark mb-1 font-weight-medium">{{$tags}}</h2>
+                                </div>
+                                <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">@lang('Tags')</h6>
+                            </div>
+                            <div class="ml-auto mt-md-3 mt-lg-0">
+                               <span class="opacity-7 text-purple"><i class="fa fa-tags fa-2x"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-3">
+            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-4">
                 <div class="card shadow border-right">
                     <div class="card-body">
                         <div class="d-flex d-lg-flex d-md-block align-items-center">
@@ -73,9 +52,61 @@
                                 <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">@lang('Today IP Block')</h6>
                             </div>
                             <div class="ml-auto mt-md-3 mt-lg-0">
-                                <span class="opacity-7 text-muted">
-                                   <span class="opacity-7 text-muted"><i class="fa fa-lock fa-2x"></i></span>
-                                </span>
+                               <span class="opacity-7 text-secondary"><i class="fa fa-lock fa-2x"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-4">
+                <div class="card shadow border-right">
+                    <div class="card-body">
+                        <div class="d-flex d-lg-flex d-md-block align-items-center">
+                            <div>
+                                <div class="d-inline-flex align-items-center">
+                                    <h2 class="text-dark mb-1 font-weight-medium">{{$wallpapers}}</h2>
+                                </div>
+                                <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">@lang('Wallpapers')</h6>
+                            </div>
+                            <div class="ml-auto mt-md-3 mt-lg-0">
+                                <span class="opacity-7 text-danger"><i class="fa fa-image fa-2x"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-4">
+                <div class="card shadow border-right">
+                    <div class="card-body">
+                        <div class="d-flex d-lg-flex d-md-block align-items-center">
+                            <div>
+                                <div class="d-inline-flex align-items-center">
+                                    <h2 class="text-dark mb-1 font-weight-medium">{{$ringtones}}</h2>
+                                </div>
+                                <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">@lang('Ringtones')</h6>
+                            </div>
+                            <div class="ml-auto mt-md-3 mt-lg-0">
+                               <span class="opacity-7 text-warning"><i class="fa fa-bell fa-2x"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-4">
+                <div class="card shadow border-right">
+                    <div class="card-body">
+                        <div class="d-flex d-lg-flex d-md-block align-items-center">
+                            <div>
+                                <div class="d-inline-flex align-items-center">
+                                    <h2 class="text-dark mb-1 font-weight-medium">{{$musics}}</h2>
+                                </div>
+                                <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">@lang('Musics')</h6>
+                            </div>
+                            <div class="ml-auto mt-md-3 mt-lg-0">
+                               <span class="opacity-7 text-success"><i class="fa fa-music fa-2x"></i></span>
                             </div>
                         </div>
                     </div>
@@ -351,8 +382,6 @@
                     {
                         data: data.dataPoints,
                         backgroundColor: generateBackgroundColors(data.dataPoints.length),
-
-                        // backgroundColor: ['#47c363', '#fc544b'],
                     }],
             };
 
@@ -381,8 +410,7 @@
         function prepareYearlyRedirectViewChart(result){
             $('#yearly_redirect_overview-container').html('');
             let data = result;
-            console.log(data)
-            if (data.total_redirect.every(value => value === 0)) {
+            if (data.total_login.every(value => value === 0)) {
                 $('#yearly_redirect_overview-container').empty();
                 $('#yearly_redirect_overview-container').
                 append('<div align="center" class="no-record">' +
@@ -406,7 +434,7 @@
                     datasets: [
                         {
                             label: data.month, // Name the series
-                            data: data.total_redirect, // Specify the data values array
+                            data: data.total_login, // Specify the data values array
                             fill: false,
                             borderColor: '#2196f3', // Add custom color border (Line)
                             backgroundColor: '#2196f3', // Add custom color background (Points and Fill)

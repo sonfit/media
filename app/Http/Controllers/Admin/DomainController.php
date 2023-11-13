@@ -48,7 +48,7 @@ class DomainController extends Controller
         $columnSortOrder = $request->input('order')[0]['dir'];
         $searchValue = $request->input('search')['value'];
 
-        $domainsQuery = Domain::query();
+        $domainsQuery = Domain::withCount('categories','wallpapers','ringtones','musics');
         $domainsQuery
             ->when(isset($searchValue), function ($query) use ($searchValue) {
                 $searchTerm = '%' . $searchValue . '%';
@@ -82,6 +82,10 @@ class DomainController extends Controller
                 "id" => $record->id,
                 "domain_web" => '<h5 class="text-dark mb-0 font-16 font-medium">'.$record->domain_name.'</h5><span class="text-muted font-14"><i class="fa fa-globe mr-2"></i>'.$record->domain_web.'</span>',
                 "domain_project" => $domain_project,
+                "categories_count" =>  $record->categories_count,
+                "wallpapers_count" =>  $record->wallpapers_count,
+                "ringtones_count" => $record->ringtones_count,
+                "musics_count" => $record->musics_count,
                 "is_publish" => '<span class="badge  badge-pill  badge-'.$status.'">'.$status.'</span>',
                 "action"=> $btn,
             );
@@ -307,7 +311,7 @@ class DomainController extends Controller
         $columnSortOrder = $request->input('order')[0]['dir'];
         $searchValue = $request->input('search')['value'];
 
-        $categoriesQuery = Categories::query();
+        $categoriesQuery = Categories::withCount('wallpapers','ringtones','musics');
         $categoriesQuery
             ->when(isset($searchValue), function ($query) use ($searchValue) {
                 $searchTerm = '%' . $searchValue . '%';
@@ -350,6 +354,9 @@ class DomainController extends Controller
                 "category_image" => $image,
                 "category_name" => $record->category_name,
                 "category_tags" => $tags,
+                "wallpapers_count" => $record->wallpapers_count,
+                "ringtones_count" => $record->ringtones_count,
+                "musics_count" => $record->musics_count,
                 "category_checked_ip" => '<span class="badge  badge-pill  badge-'.$status.'">'.$status.'</span>',
                 "action"=> $btn,
             );

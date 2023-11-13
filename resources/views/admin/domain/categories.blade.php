@@ -25,11 +25,14 @@
                                 <table class="table table-hover table-striped table-bordered" id="tableCategories">
                                     <thead class="thead-dark">
                                     <tr>
-                                        <th style="width: 15%" scope="col">Image</th>
+                                        <th scope="col">Image</th>
                                         <th scope="col">Name</th>
-                                        <th style="width: 5%" scope="col">Read</th>
+                                        <th scope="col">Read</th>
                                         <th scope="col">Tags</th>
-                                        <th style="width: 10%" scope="col">@lang('Action')</th>
+                                        <th scope="col">Wallpapers</th>
+                                        <th scope="col">Ringtones</th>
+                                        <th scope="col">Musics</th>
+                                        <th scope="col">@lang('Action')</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -88,6 +91,9 @@
                     {data: 'category_name', name: 'category_name'},
                     {data: 'category_checked_ip', name: 'category_checked_ip'},
                     {data: 'category_tags', name: 'category_tags'},
+                    {data: 'wallpapers_count', name: 'wallpapers_count'},
+                    {data: 'ringtones_count', name: 'ringtones_count'},
+                    {data: 'musics_count', name: 'musics_count'},
                     {data: 'action', name: 'action', orderable: false, searchable: false},
                 ],
                 [[ 0, 'asc' ]],

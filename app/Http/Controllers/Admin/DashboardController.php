@@ -6,10 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Http\Traits\Upload;
 use App\Models\Domain;
 
+use App\Models\DomainLoginLogs;
 use App\Models\IPLIST;
 
 
+use App\Models\Musics;
+use App\Models\Ringtones;
+use App\Models\Tags;
 use App\Models\User;
+use App\Models\Wallpapers;
 use App\Rules\FileTypeValidate;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -35,11 +40,12 @@ class DashboardController extends Controller
     }
     public function dashboard()
     {
-//        $data['user'] = User::count();
         $data['domain'] = Domain::count();
-//        $data['redirect'] = Redirect::count();
+        $data['tags'] = Tags::count();
         $data['iplist'] = IPLIST::count();
-
+        $data['wallpapers'] = Wallpapers::count();
+        $data['ringtones'] = Ringtones::count();
+        $data['musics'] = Musics::count();
         return view('admin.dashboard', $data);
     }
 
@@ -49,7 +55,7 @@ class DashboardController extends Controller
         $start_date = Carbon::parse($request['start_date'])->format('Y-m-d');
         $end_date = Carbon::parse($request['end_date'])->format('Y-m-d');
 
-        $query = RedirectDetail::whereBetween('created_at', [date($start_date), date($end_date)])
+        $query = DomainLoginLogs::whereBetween('created_at', [date($start_date), date($end_date)])
             ->selectRaw('platform_name, SUM(count) as count_platform')
             ->groupBy('platform_name')
             ->orderBy('platform_name', 'desc');
@@ -60,7 +66,7 @@ class DashboardController extends Controller
                 'AndroidOS',
                 'iOS',
                 'Windows',
-                'Other',
+                'Unknown',
             ],
             'dataPoints' => [
                 $platformCounts['AndroidOS'] ?? 0,
@@ -80,7 +86,7 @@ class DashboardController extends Controller
         $start_date = Carbon::parse($request['start_date'])->format('Y-m-d');
         $end_date = Carbon::parse($request['end_date'])->format('Y-m-d');
 
-        $query = RedirectDetail::whereBetween('created_at', [date($start_date), date($end_date)])
+        $query = DomainLoginLogs::whereBetween('created_at', [date($start_date), date($end_date)])
             ->selectRaw('country,SUM(count) as count_country')
             ->groupBy('country')
             ->orderBy('count_country', 'desc');
@@ -106,13 +112,13 @@ class DashboardController extends Controller
         $start_date = Carbon::parse($request['start_date'])->format('Y-m-d');
         $end_date = Carbon::parse($request['end_date'])->format('Y-m-d');
 
-        $query = RedirectDetail::whereBetween('created_at', [date($start_date), date($end_date)]);
+        $query = DomainLoginLogs::whereBetween('created_at', [date($start_date), date($end_date)]);
 
 
         $redirect = $query
             ->groupBy(DB::raw('DATE_FORMAT(updated_at, "%b %d")'))
             ->orderBy('updated_at')
-            ->select(DB::raw('DATE_FORMAT(updated_at, "%b %d") as month'), DB::raw('SUM(count) as total_redirect'))
+            ->select(DB::raw('DATE_FORMAT(updated_at, "%b %d") as month'), DB::raw('SUM(count) as total_login'))
             ->get()
             ->keyBy('month');
 
@@ -125,11 +131,11 @@ class DashboardController extends Controller
         $incomeOverviewData = array_map(function ($datePeriod) use ($redirect) {
             $month = $datePeriod->format('M d');
 
-            return $redirect->has($month) ? $redirect->get($month)->total_redirect : 0;
+            return $redirect->has($month) ? $redirect->get($month)->total_login : 0;
         }, iterator_to_array($period));
 
         $data['labels'] = $labelsData;
-        $data['total_redirect'] = $incomeOverviewData;
+        $data['total_login'] = $incomeOverviewData;
         return $data;
     }
 

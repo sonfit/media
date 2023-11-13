@@ -18,11 +18,15 @@
                 <table class="table table-hover table-striped table-bordered" id="tableDomain">
                     <thead class="thead-dark">
                     <tr>
-                        <th style="width: 5%" scope="col">@lang('SL')</th>
+                        <th scope="col">@lang('SL')</th>
                         <th scope="col">@lang('Domain')</th>
-                        <th style="width: 50%" scope="col">@lang('Project AIO')</th>
+                        <th scope="col">@lang('Project AIO')</th>
+                        <th scope="col">@lang('Categories')</th>
+                        <th scope="col">@lang('Wallpapers')</th>
+                        <th scope="col">@lang('Ringtones')</th>
+                        <th scope="col">@lang('Musics')</th>
                         <th scope="col">@lang('Status')</th>
-                        <th style="width: 10%" scope="col">@lang('Action')</th>
+                        <th scope="col">@lang('Action')</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -57,6 +61,10 @@
                     {data: 'id', name: 'id'},
                     {data: 'domain_web', name: 'domain_web'},
                     {data: 'domain_project', name: 'domain_project'},
+                    {data: 'categories_count', name: 'categories_count'},
+                    {data: 'wallpapers_count', name: 'wallpapers_count'},
+                    {data: 'ringtones_count', name: 'ringtones_count'},
+                    {data: 'musics_count', name: 'musics_count'},
                     {data: 'is_publish', name: 'is_publish'},
                     {data: 'action', name: 'action', orderable: false, searchable: false},
                 ],

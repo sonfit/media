@@ -41,7 +41,7 @@ class TagsController extends Controller
         $columnSortOrder = $request->input('order')[0]['dir'];
         $searchValue = $request->input('search')['value'];
 
-        $tagsQuery = Tags::query();
+        $tagsQuery = Tags::withCount('wallpapers','ringtones','musics');
         $tagsQuery
             ->when(isset($searchValue), function ($query) use ($searchValue) {
                 $searchTerm = '%' . $searchValue . '%';
@@ -62,12 +62,15 @@ class TagsController extends Controller
 
         $data_arr = array();
         foreach ($records as $record) {
-                $btn = ' <a href="javascript:void(0)" data-id="'.$record->id.'" class="btn editTag"><i class="fa fa-edit text-warning"></i></a>';
-                $btn .= ' <a href="javascript:void(0)" data-id="'.$record->id.'" class="btn deleteTag"><i class="fa fa-trash text-danger"></i></a>';
+            $btn = ' <a href="javascript:void(0)" data-id="'.$record->id.'" class="btn editTag"><i class="fa fa-edit text-warning"></i></a>';
+            $btn .= ' <a href="javascript:void(0)" data-id="'.$record->id.'" class="btn deleteTag"><i class="fa fa-trash text-danger"></i></a>';
 
             $data_arr[] = array(
                 "id" => $record->id,
                 "tag_name" => $record->tag_name,
+                "wallpapers_count" => $record->wallpapers_count,
+                "ringtones_count" => $record->ringtones_count,
+                "musics_count" => $record->musics_count,
                 "action"=> $btn,
             );
         }

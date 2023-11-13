@@ -19,6 +19,9 @@
                         <thead class="thead-dark">
                         <tr>
                             <th scope="col">@lang('Tag name')</th>
+                            <th scope="col">@lang('Wallpapers')</th>
+                            <th scope="col">@lang('Ringtones')</th>
+                            <th scope="col">@lang('Musics')</th>
                             <th scope="col">@lang('Action')</th>
                         </tr>
                         </thead>
@@ -82,6 +85,9 @@
                 "{{ route('admin.tags.getIndex')}}",
                 [
                     {data: 'tag_name', name: 'tag_name'},
+                    {data: 'wallpapers_count', name: 'wallpapers_count'},
+                    {data: 'ringtones_count', name: 'ringtones_count'},
+                    {data: 'musics_count', name: 'musics_count'},
                     {data: 'action', name: 'action', orderable: false, searchable: false},
                 ],
                 [[ 0, 'asc' ]]
