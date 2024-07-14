@@ -107,10 +107,10 @@ class ManageRolePermissionController extends Controller
             return back()->withErrors($Validator)->withInput();
         }
 
-        $permissions = explode(',',join(',',$request->access));
-        foreach ($permissions as $permissionName) {
-            Permission::updateorCreate(['name' => $permissionName]);
-        }
+//        $permissions = explode(',',join(',',$request->access));
+//        foreach ($permissions as $permissionName) {
+//            Permission::updateorCreate(['name' => $permissionName]);
+//        }
 
         $item = new Admin();
         $item->name = $request->name;

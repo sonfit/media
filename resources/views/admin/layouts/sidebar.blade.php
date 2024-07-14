@@ -44,10 +44,19 @@
                 @endcan
 
                 @can('admin.domain')
-                        <li class="sidebar-item {{menuActive(['admin.domain*'],3)}}">
-                        <a class="sidebar-link" href="{{ route('admin.domain') }}" aria-expanded="false">
+                        <li class="sidebar-item {{menuActive(['admin.domain.*'],3)}}">
+                        <a class="sidebar-link" href="{{ route('admin.domain.') }}" aria-expanded="false">
                             <i class="fas fa-globe text-info"></i>
                             <span class="hide-menu">@lang('Domain')</span>
+                        </a>
+                    </li>
+                @endcan
+
+                @can('admin.domainLoginLogs')
+                    <li class="sidebar-item">
+                        <a class="sidebar-link" href="{{ route('admin.domainLoginLogs') }}" aria-expanded="false">
+                            <i class="fas fa-book text-secondary"></i>
+                            <span class="hide-menu">@lang('Domain Login Logs')</span>
                         </a>
                     </li>
                 @endcan

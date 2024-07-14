@@ -29,7 +29,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        URL::forceScheme('https');
+        if (config('app.env') != 'local') {
+            URL::forceScheme('https');
+        }
 
         $data['basic'] = (object) config('basic');
         $data['theme'] = template();

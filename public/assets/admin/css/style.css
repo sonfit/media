@@ -1292,3 +1292,9 @@ svg.feather.feather-chevron-down.svg-icon {
     color: red; /* Màu sắc của biểu tượng */
     cursor: pointer; /* Biểu tượng có hình dạng của con trỏ khi di chuột qua nó */
 }
+
+.plus-icon {
+    margin-left: 15px; /* Tạo khoảng cách từ phía trái của biểu tượng */
+    color: green; /* Màu sắc của biểu tượng */
+    cursor: pointer; /* Biểu tượng có hình dạng của con trỏ khi di chuột qua nó */
+}

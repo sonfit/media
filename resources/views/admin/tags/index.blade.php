@@ -85,9 +85,9 @@
                 "{{ route('admin.tags.getIndex')}}",
                 [
                     {data: 'tag_name', name: 'tag_name'},
-                    {data: 'wallpapers_count', name: 'wallpapers_count'},
-                    {data: 'ringtones_count', name: 'ringtones_count'},
-                    {data: 'musics_count', name: 'musics_count'},
+                    {data: 'wallpapers_count', name: 'wallpapers_count', orderable: false},
+                    {data: 'ringtones_count', name: 'ringtones_count', orderable: false},
+                    {data: 'musics_count', name: 'musics_count', orderable: false},
                     {data: 'action', name: 'action', orderable: false, searchable: false},
                 ],
                 [[ 0, 'asc' ]]

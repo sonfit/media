@@ -20,10 +20,6 @@ use Stevebauman\Purify\Facades\Purify;
 class WallpapersController extends Controller
 {
 
-    public function __construct()
-    {
-        $this->middleware(['auth'])->except('compareImages');
-    }
 
     public function index()
     {
@@ -44,10 +40,12 @@ class WallpapersController extends Controller
         $page = $request->input('page');
         $length = $request->input('length');
         $search = $request->input('search');
-        $domainsQuery = Wallpapers::with('tags')->orderBy('wallpaper_image', 'desc');
+        $domainsQuery = Wallpapers::with('tags')->latest();
         if($search !='null' ){
-            $domainsQuery->where('wallpaper_name','like','%' . $search . '%')
-            ->orwhereHas('tags', function($query) use ($search) {
+            $domainsQuery
+                ->where('wallpaper_name','like','%' . $search . '%')
+                ->orWhere('wallpaper_image','like','%' . $search . '%')
+                ->orwhereHas('tags', function($query) use ($search) {
                 $query->where('tag_name', 'like','%' . $search . '%');
             });
         }
@@ -221,36 +219,47 @@ class WallpapersController extends Controller
     public function compareImages(Request $request){
         $order = $request->input('order', 'id');
         $value = $request->input('value', 5);
+        $time = $request->input('time', 2);
         $wallpaper_check = Wallpapers::where('wallpaper_status',0)->orderByDesc($order)->first();
         if(!$wallpaper_check){
-            return 'Không còn ảnh để check';
+            echo "No wallpaper found. Stopping execution.";
+            return;
         }
-        $isDuplicateFound = false;
-        echo 'wallpaper_check: '.$wallpaper_check->wallpaper_name.'<br>';
-        Wallpapers::where('wallpaper_status','<>',0)->orderByDesc($order)->chunk(200, function ($wallpapers_compare) use ($wallpaper_check, $value, &$isDuplicateFound) {
-            foreach ($wallpapers_compare as $item){
-                $compareValue = $this->compare($wallpaper_check, $item);
-                if ($compareValue < $value) {
-                    echo 'wallpaper_compare: '.$wallpaper_check->wallpaper_name.'<br>';
-                    $this->processDuplicateWallpaper($wallpaper_check, $item);
-                    $isDuplicateFound = true;
-                    return false; // This will break the foreach loop and prevent chunk() from fetching the next chunk.
+        try {
+            $isDuplicateFound = false;
+            echo 'wallpaper_check: '.$wallpaper_check->wallpaper_name.'<br>';
+            echo '<img alt="'.$wallpaper_check->wallpaper_image.'" src="'.url('/storage/wallpapers/thumbnails').'/'.$wallpaper_check->wallpaper_image.'" width="75">';
+
+            Wallpapers::where('wallpaper_status','<>',0)->orderByDesc($order)->chunk(500, function ($wallpapers_compare) use ($wallpaper_check, $value, &$isDuplicateFound) {
+                foreach ($wallpapers_compare as $item){
+                    $compareValue = $this->compare($wallpaper_check, $item);
+                    if ($compareValue < $value) {
+                        echo 'wallpaper_compare: '.$wallpaper_check->wallpaper_name.'<br>';
+                        $this->processDuplicateWallpaper($wallpaper_check, $item);
+                        $isDuplicateFound = true;
+                        return false; // This will break the foreach loop and prevent chunk() from fetching the next chunk.
+                    }
                 }
-            }
-            if ($isDuplicateFound) {
-                return false; // This will prevent chunk() from fetching the next chunk if a duplicate is found.
-            }
-        });
+                if ($isDuplicateFound) {
+                    return false; // This will prevent chunk() from fetching the next chunk if a duplicate is found.
+                }
+            });
 
-        if (!$isDuplicateFound) {
-            $wallpaper_check->wallpaper_status = 1;
-            $wallpaper_check->save();
-        }
+            if (!$isDuplicateFound) {
+                $wallpaper_check->wallpaper_status = 1;
+                $wallpaper_check->save();
+            }
 
-        $time = $request->input('time', 2);
-        if($request->input('action') == 'auto'){
+
+            if($request->input('action') == 'auto'){
+                echo '<META http-equiv="refresh" content="'.$time.';URL=' . route('admin.wallpapers.compareImages') . '?order='.$order.'&action=auto&time='.$time.'">';
+            }
+        }catch (\Exception $exception) {
+            echo "An error occurred: " . $exception->getMessage().'- Line: '.$exception->getLine() . "<br>";
+            echo "Refreshing in 5 seconds...";
             echo '<META http-equiv="refresh" content="'.$time.';URL=' . route('admin.wallpapers.compareImages') . '?order='.$order.'&action=auto&time='.$time.'">';
         }
+
     }
 
     private function processDuplicateWallpaper($wallpaper_check, $item) {

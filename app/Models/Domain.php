@@ -10,6 +10,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 class Domain extends Model
 {
     use HasFactory, HasRelationships;
+    protected $guarded =[];
 
 
     public function iplist()

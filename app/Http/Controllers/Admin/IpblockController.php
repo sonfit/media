@@ -13,10 +13,6 @@ use Stevebauman\Purify\Facades\Purify;
 
 class IpblockController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(['auth']);
-    }
     //==================Admin===================
     public function index()
     {
@@ -36,7 +32,8 @@ class IpblockController extends Controller
             ]);
         }
         $draw = $request->input('draw');
-        $rowperpage = $request->input('length');
+        $start = $request->get("start");
+        $length = $request->input('length');
         $page = $request->input('page');
 
         $columnIndex = $request->input('order')[0]['column'];
@@ -55,7 +52,10 @@ class IpblockController extends Controller
 
         $records = $ipListQuery
             ->orderBy($columnName, $columnSortOrder)
-            ->paginate($rowperpage, ['*'], 'page', $page);
+            ->skip($start)
+            ->take($length)
+            ->get();
+//            ->paginate($length, ['*'], 'page', $page);
 
         $totalRecords = IPLIST::count();
 
@@ -100,15 +100,13 @@ class IpblockController extends Controller
         if ($validator->fails()) {
             return response()->json(['errors'=> $validator->errors()->all()]);
         }
-
         $result = new Iplist();
-        $result->ip_address = $iplistData['ip_address'];
+        $result->ip_address = getIpPrefix($iplistData['ip_address']);
         $result->list_type_id = $iplistData['list_type_id'];
         $result->save();
         return response()->json([
             'success'=>'Saved Successfully',
         ]);
-
     }
 
     public function edit($id)
@@ -202,6 +200,5 @@ class IpblockController extends Controller
 
         $ipList->delete();
         return response()->json(['success'=>'Delete Successfully.']);
-
     }
 }

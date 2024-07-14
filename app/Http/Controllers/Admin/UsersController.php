@@ -30,7 +30,6 @@ class UsersController extends Controller
 
     public function index()
     {
-//        $users = User::latest()->paginate(config('basic.paginate'));
         return view('admin.users.list');
     }
 

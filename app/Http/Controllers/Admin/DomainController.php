@@ -6,9 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Categories;
 use App\Models\Domain;
 use App\Models\DomainLoginLogs;
-use App\Models\Wallpapers;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -17,12 +18,6 @@ use Stevebauman\Purify\Facades\Purify;
 
 class DomainController extends Controller
 {
-
-    public function __construct()
-    {
-        $this->middleware(['auth']);
-    }
-
     public function index()
     {
         if(!Auth::user()->can('admin.domain')){
@@ -40,7 +35,8 @@ class DomainController extends Controller
             ]);
         }
         $draw = $request->input('draw');
-        $rowperpage = $request->input('length');
+        $start = $request->get("start");
+        $length = $request->input('length');
         $page = $request->input('page');
 
         $columnIndex = $request->input('order')[0]['column'];
@@ -48,7 +44,7 @@ class DomainController extends Controller
         $columnSortOrder = $request->input('order')[0]['dir'];
         $searchValue = $request->input('search')['value'];
 
-        $domainsQuery = Domain::withCount('categories','wallpapers','ringtones','musics');
+        $domainsQuery = Domain::withCount('categories');
         $domainsQuery
             ->when(isset($searchValue), function ($query) use ($searchValue) {
                 $searchTerm = '%' . $searchValue . '%';
@@ -61,7 +57,9 @@ class DomainController extends Controller
 
         $records = $domainsQuery
             ->orderBy($columnName, $columnSortOrder)
-            ->paginate($rowperpage, ['*'], 'page', $page);
+            ->skip($start)
+            ->take($length)
+            ->get();
 
          if (!isset($searchValue)) {
             $totalRecords = $totalRecordswithFilter;
@@ -76,16 +74,22 @@ class DomainController extends Controller
             $btn .= ' <a href="'.route('admin.domain.categories',['id'=>$record->id]).'" class="btn"><i class="fa fa-cog text-secondary"></i></a>';
 
             $status = $record->is_publish == 1 ? "success" :  "danger" ;
-            $domain_project = '<span class="badge badge-pill badge-primary m-1 font-16">'.$record->domain_project.'</span>';
+            $domain_project = '<span class="badge badge-pill badge-primary m-1 font-16">'.$record->domain_project.'</span><a href="javascript:void(0)" data-id="'.$record->id.'" class="btn getInfoAIO"><i class="fa fa-download text-success"></i></a>';
+
+            $domainImage = $record->domain_logo;
+            $imagePath = $domainImage
+                ? asset('storage/logos/'.$record->id.'/'. $domainImage)
+                : asset('storage/default.png');
+
+            $image = '<a class="image-popup-no-margins" href="'.$imagePath.'"><img src="' . $imagePath . '" height="55"></a>';
+
 
             $data_arr[] = array(
                 "id" => $record->id,
+                "domain_logo" => $image,
                 "domain_web" => '<h5 class="text-dark mb-0 font-16 font-medium">'.$record->domain_name.'</h5><span class="text-muted font-14"><i class="fa fa-globe mr-2"></i>'.$record->domain_web.'</span>',
                 "domain_project" => $domain_project,
-                "categories_count" =>  $record->categories_count,
-                "wallpapers_count" =>  $record->wallpapers_count,
-                "ringtones_count" => $record->ringtones_count,
-                "musics_count" => $record->musics_count,
+                "categories_count" => $record->categories_count,
                 "is_publish" => '<span class="badge  badge-pill  badge-'.$status.'">'.$status.'</span>',
                 "action"=> $btn,
             );
@@ -303,7 +307,8 @@ class DomainController extends Controller
             ]);
         }
         $draw = $request->input('draw');
-        $rowperpage = $request->input('length');
+        $start = $request->get("start");
+        $length = $request->input('length');
         $page = $request->input('page');
 
         $columnIndex = $request->input('order')[0]['column'];
@@ -322,7 +327,9 @@ class DomainController extends Controller
 
         $records = $categoriesQuery
             ->orderBy($columnName, $columnSortOrder)
-            ->paginate($rowperpage, ['*'], 'page', $page);
+            ->skip($start)
+            ->take($length)
+            ->get();
 
         if (!isset($searchValue)) {
             $totalRecords = $totalRecordswithFilter;
@@ -344,7 +351,7 @@ class DomainController extends Controller
 
             $categoryImage = $record->category_image;
             $imagePath = $categoryImage
-                ? asset('storage/domains/' . $record->domain_id . '/categories/' . $categoryImage)
+                ? asset('storage/categories/'. $categoryImage)
                 : asset('storage/defaultCate.png');
 
             $image = '<a class="image-popup-no-margins" href="'.$imagePath.'"><img src="' . $imagePath . '" height="55"></a>';
@@ -398,8 +405,8 @@ class DomainController extends Controller
 
         if ($request->hasFile('image')) {
             $file = $request->file('image');
-            $fileName = Str::uuid(). '.' . $file->getClientOriginalExtension();
-            $path = storage_path('app/public/domains/' . $categoryData['domain_id'] . '/categories');
+            $fileName = $categoryData['domain_id'] . '/'.Str::uuid(). '.' . $file->getClientOriginalExtension(); // . $categoryData['domain_id'] . '/'
+            $path = storage_path('app/public/categories/');
 
             if (!file_exists($path)) {
                 mkdir($path, 0777, true);
@@ -450,8 +457,8 @@ class DomainController extends Controller
         $result->category_checked_ip = $categoryData['category_status'] == 1 ? 1 : 0 ;
         if ($request->hasFile('image')) {
             $file = $request->file('image');
-            $fileName = Str::uuid(). '.' . $file->getClientOriginalExtension();
-            $path = storage_path('app/public/domains/' . $categoryData['domain_id'] . '/categories');
+            $fileName =  $categoryData['domain_id'] . '/'.Str::uuid(). '.' . $file->getClientOriginalExtension();
+            $path = storage_path('app/public/categories/');
             $category_image_old = $result->category_image;
             if ($category_image_old != "") {
                 unlink($path.'/'.$category_image_old);
@@ -481,17 +488,7 @@ class DomainController extends Controller
         }
         $id = $request->id;
         $category = Categories::find($id);
-        $category_image_old = $category->category_image;
-        if ($category_image_old != "") {
-            try {
-                $path = storage_path('app/public/domains/' . $category->domain_id . '/categories');
-                unlink($path.'/'.$category_image_old);
-            }catch (\Exception $ex) {
-                Log::error('Không có hình ảnh: '.$category->category_image);
-            }
-        }
         $category->delete();
-        $category->tags()->detach();
         return response()->json(['success'=>'Delete Successfully.']);
     }
 
@@ -529,7 +526,6 @@ class DomainController extends Controller
 
     //============================= RINGTONES =============================
 
-
     public function ringtones($id)
     {
         if(!Auth::user()->can('admin.domain')){
@@ -549,7 +545,8 @@ class DomainController extends Controller
             ]);
         }
         $draw = $request->input('draw');
-        $rowperpage = $request->input('length');
+        $start = $request->get("start");
+        $length = $request->input('length');
         $page = $request->input('page');
 
         $columnIndex = $request->input('order')[0]['column'];
@@ -570,14 +567,15 @@ class DomainController extends Controller
 
         $records = $ringtonesQuery
             ->orderBy($columnName, $columnSortOrder)
-            ->paginate($rowperpage, ['*'], 'page', $page);
+            ->skip($start)
+            ->take($length)
+            ->get();
 
         if (!isset($searchValue)) {
             $totalRecords = $totalRecordswithFilter;
         } else {
             $totalRecords = $ringtonesQuery->count();
         }
-
 
         $data_arr = array();
         foreach ($records as $record) {
@@ -609,7 +607,6 @@ class DomainController extends Controller
         return json_encode($response);
     }
 
-
     //============================= MUSICS =============================
 
     public function musics($id)
@@ -631,7 +628,8 @@ class DomainController extends Controller
             ]);
         }
         $draw = $request->input('draw');
-        $rowperpage = $request->input('length');
+        $start = $request->get("start");
+        $length = $request->input('length');
         $page = $request->input('page');
 
         $columnIndex = $request->input('order')[0]['column'];
@@ -652,7 +650,9 @@ class DomainController extends Controller
 
         $records = $musicsQuery
             ->orderBy($columnName, $columnSortOrder)
-            ->paginate($rowperpage, ['*'], 'page', $page);
+            ->skip($start)
+            ->take($length)
+            ->get();
 
         if (!isset($searchValue)) {
             $totalRecords = $totalRecordswithFilter;
@@ -712,8 +712,8 @@ class DomainController extends Controller
             ]);
         }
         $draw = $request->input('draw');
-        $rowperpage = $request->input('length');
-        $page = $request->input('page');
+        $start = $request->get("start");
+        $length = $request->input('length');
 
         $columnIndex = $request->input('order')[0]['column'];
         $columnName = $request->input('columns')[$columnIndex]['data'];
@@ -735,19 +735,17 @@ class DomainController extends Controller
 
         $records = $domainLogsQuery
             ->orderBy($columnName, $columnSortOrder)
-            ->paginate($rowperpage, ['*'], 'page', $page);
+            ->skip($start)
+            ->take($length)
+            ->get();
 
         if (!isset($searchValue)) {
             $totalRecords = $totalRecordswithFilter;
         } else {
             $totalRecords = $domainLogsQuery->count();
         }
-
-
         $data_arr = array();
         foreach ($records as $record) {
-
-
             $data_arr[] = array(
                 "id" => $record->id,
                 "ip_address" => $record->ip_address,
@@ -767,4 +765,118 @@ class DomainController extends Controller
 
         return json_encode($response);
     }
+
+    //============================= LOGS =============================
+
+
+    public function getInfoAIO($id){
+        try {
+            $domain = Domain::findorFail($id);
+            $url = "https://aio.vietmmo.net/api/project-aio/".$domain->domain_project;
+            $dataGet = $this->CURL($url);
+            if($dataGet['msg'] == 'success'){
+                $data = $dataGet['data'];
+                $key = array_search('CHPLAY', array_column($data['markets'], 'market_name'));
+
+                if($key || $key == 0){
+                    $market_get = $data['markets'][$key];
+                    $ads_get = json_decode($market_get['pivot']['ads'],true);
+                    $package = $market_get['pivot']['package'];
+                    $link = $market_get['pivot']['app_link'];
+                    $site_app_name = $market_get['pivot']['app_name_x'];
+                    $ads = [
+                        "app_id" => $ads_get['ads_id'],
+                        "banner_ads_id" => $ads_get['ads_banner'],
+                        "interstitial_ads_id" => $ads_get['ads_inter'],
+                        "rewarded_ads_id" => $ads_get['ads_reward'],
+                        "native_ads_id" => $ads_get['ads_native'],
+                        "open_ads_id" => $ads_get['ads_open'],
+                    ];
+
+                    $this->downloadImage('https://aio.vietmmo.net/storage/projects/' . $data['da']['ma_da'] . '/' . $data['projectname'] . '/' . $data['logo'], $domain);
+
+                    $update = [
+                        'domain_name' => $data['title_app'],
+                        'domain_app_name' => $site_app_name,
+                        'direct_link' => $link,
+                        'domain_logo' => $data['logo'],
+                        'domain_package' => $package,
+                        'manage_ads' => json_encode($ads),
+                    ];
+                    $domain->update($update);
+                    return response()->json([
+                        'success'=>'Get thành công',
+                        'domain'=> $domain]);
+                }else{
+                    return response()->json(['error'=>'Kiểm tra Market trên AIO']);
+                }
+            }else{
+                return response()->json(['error'=>'Lỗi, kiểm tra tên project']);
+            }
+
+        }catch (\Exception $exception) {
+            Log::error('Message:' . $exception->getMessage() . '---getAIO--' . $exception->getLine());
+        }
+
+    }
+
+    public function CURL($url){
+        $dataArr = [
+            'Content-Type'=>'application/json',
+        ];
+        $response = Http::withHeaders($dataArr)->get($url);
+        if ($response->successful()) {
+            $data = $response->json();
+        }
+        return $data;
+    }
+
+    public function downloadImage($imageUrl,$domain)
+    {
+        $client = new Client();
+        $filename = basename($imageUrl);
+        $storagePath = storage_path('app/public/logos/'.$domain->id);
+        if (!file_exists($storagePath)) {
+            mkdir($storagePath, 0777, true);
+        }
+        $response = $client->get($imageUrl);
+        $imagePath = $storagePath . '/' . $filename;
+        file_put_contents($imagePath, $response->getBody()->getContents());
+        return response()->json(['message' => 'Hình ảnh đã được tải xuống thành công']);
+    }
+
+    public function multipleUpdate(Request $request){
+        ini_set('max_execution_time', 1200);
+        try {
+            $data = array_map('trim', explode("\r\n", $request->projectAIO));
+
+            $domainsInstance = new Domain();
+            $index = 'id';
+
+            Domain::whereIn('domain_project', $data)->chunk(10, function ($domains) use ($request, $domainsInstance, $index) {
+                $valueInsert = [];
+
+                foreach ($domains as $domain) {
+                    $arr['id'] = $domain->id;
+                    $arr['is_publish'] = $request->isPublish_statusMultiple == 1 ? 1 : 0;
+                    $arr['is_ads'] = $request->isAds_statusMultiple == 1 ? 1 : 0;
+
+                    if ($request->getInfoAIOMultiple == 1) {
+                        $this->getInfoAIO($domain->id);
+                    }
+
+                    $valueInsert[] = $arr;
+                }
+
+                batch()->update($domainsInstance, $valueInsert, $index);
+            });
+
+            return response()->json(['success' => 'Thành công']);
+        } catch (\Exception $exception) {
+            Log::error('Message:updateMultiple---' . $exception->getMessage() . '--' . $exception->getLine());
+            return response()->json(['error' => 'Lỗi ']);
+        }
+    }
+
+
 }

@@ -10,7 +10,7 @@
     "require": {
         "php": "^7.3|^8.0",
         "anhskohbo/no-captcha": "^3.5",
-        "athlon1600/youtube-downloader": "^3.1",
+        "athlon1600/youtube-downloader": "4.0",
         "barryvdh/laravel-dompdf": "^0.9.0",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
@@ -32,10 +32,11 @@
         "propaganistas/laravel-phone": "^4.3",
         "pusher/pusher-php-server": "^4.1",
         "securionpay/securionpay-php": "^2.2.0",
+        "spatie/laravel-analytics": "^4.0",
         "spatie/laravel-permission": "^6.0",
         "staudenmeir/eloquent-has-many-deep": "^1.14",
         "staudenmeir/eloquent-json-relations": "^1.5",
-        "stevebauman/purify": "^4.0",
+        "stevebauman/purify": "^6.0",
         "swiftmailer/swiftmailer": "^6.0",
         "torann/geoip": "^3.0",
         "xsoap/init": "^1.0"

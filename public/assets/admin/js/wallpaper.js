@@ -44,8 +44,6 @@ $(function() {
         return getURLParam('search');
     }
 
-
-
 // Hàm cập nhật chế độ xem
     function updateViewMode(viewMode) {
         viewParam = viewMode ?? 'grid';

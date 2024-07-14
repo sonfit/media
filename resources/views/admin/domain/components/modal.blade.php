@@ -65,6 +65,78 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade bd-example-modal-xl" id="modalUpdateDomain" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content ">
+            <div class="modal-header modal-colored-header bg-primary">
+                <h4 class="modal-title" id="myModalLabel">@lang('Update Domain')</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+
+            <form class="actionRoute" id="formUpdateDomain"
+                  enctype="multipart/form-data">
+                @csrf
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label class="text-dark"> Mã Project </label>
+                            <textarea class="form-control" rows="10" name="projectAIO" id="projectAIO" autocomplete="off"
+                                      placeholder="DA123-xxx"></textarea>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label class="text-dark">@lang('Publish')</label>
+                                    <div class="custom-switch-btn w-md-80">
+                                        <input type='hidden' value='1' name='isPublish_statusMultiple'>
+                                        <input type="checkbox" name="isPublish_statusMultiple" class="custom-switch-checkbox"
+                                               id="isPublish_statusMultiple">
+                                        <label class="custom-switch-checkbox-label" for="isPublish_statusMultiple">
+                                            <span class="custom-switch-checkbox-inner"></span>
+                                            <span class="custom-switch-checkbox-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-12">
+                                    <label class="text-dark">@lang('Status ADS')</label>
+                                    <div class="custom-switch-btn w-md-80">
+                                        <input type='hidden' value='1' name='isAds_statusMultiple'>
+                                        <input type="checkbox" name="isAds_statusMultiple" class="custom-switch-checkbox"
+                                               id="isAds_statusMultiple">
+                                        <label class="custom-switch-checkbox-label" for="isAds_statusMultiple">
+                                            <span class="custom-switch-checkbox-inner"></span>
+                                            <span class="custom-switch-checkbox-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label class="text-dark">@lang('Get AIO')</label>
+                                    <div class="custom-switch-btn w-md-80">
+                                        <input type='hidden' value='1' name='getInfoAIOMultiple'>
+                                        <input type="checkbox" name="getInfoAIOMultiple" class="custom-switch-checkbox"
+                                               id="getInfoAIOMultiple">
+                                        <label class="custom-switch-checkbox-label" for="getInfoAIOMultiple">
+                                            <span class="custom-switch-checkbox-inner"></span>
+                                            <span class="custom-switch-checkbox-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('Close')</button>
+                    <button type="submit" class="btn btn-success">@lang('Save')</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @push('extra-script')
     <script>
         $(document).ready(function () {
@@ -80,6 +152,11 @@
                 $('#btnDomain').val('createDomain');
                 $('#domain_id').val('');
                 $('#formDomain').trigger("reset");
+            });
+
+            $(document).on('click','#updateDomain', function (data){
+                $('#modalUpdateDomain').modal('show');
+                $('#formUpdateDomain').trigger("reset");
             });
 
             $(document).on('click','.editDomain', function (data){
@@ -122,6 +199,18 @@
                     $('#modalDomain').modal('hide');
                     $('#tableDomain').DataTable().draw();
                     $('#tableLoadDomain').DataTable().draw();
+                };
+                handleAjaxRequest(formData, url, successCallback);
+            });
+
+            $('#formUpdateDomain').on('submit',function (event){
+                event.preventDefault();
+                var formData = new FormData($("#formUpdateDomain")[0]);
+                var url = "{{ route('admin.domain.multipleUpdate') }}";
+                var successCallback = function () {
+                    $('#formUpdateDomain').trigger("reset");
+                    $('#modalUpdateDomain').modal('hide');
+                    $('#tableDomain').DataTable().draw();
                 };
                 handleAjaxRequest(formData, url, successCallback);
             });

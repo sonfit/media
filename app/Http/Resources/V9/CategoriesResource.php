@@ -17,7 +17,7 @@ class CategoriesResource extends JsonResource
         return [
             'cid' => $this->id,
             'category_name' => $this->category_name,
-            'cat_image' => 'domains/'.$this->domain_id.'/categories/'.$this->category_image,
+            'cat_image' => 'categories/'.$this->category_image,
         ];
     }
 }

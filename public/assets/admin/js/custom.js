@@ -201,6 +201,9 @@ function handleAjaxRequest(formData, url, successCallback) {
                     Notiflix.Notify.Failure(error);
                 });
             }
+            if (data.error) {
+                Notiflix.Notify.Failure(error);
+            }
 
             if (data.success) {
                 Notiflix.Notify.Success(data.success);
@@ -270,53 +273,6 @@ function setupDataTable1(selector, url, columns, order, extraData, fnDrawCallbac
     });
 }
 
-function setupDataTable2(selector, url, columns, order, extraData, fnDrawCallback, createdRow) {
-    $.fn.dataTable.ext.errMode = 'throw';
-    var config = {
-        displayLength: paginate,
-        processing: false,
-        serverSide: true,
-        destroy: true,
-        fixedHeader: {
-            header: true,
-            headerOffset: 80
-        },
-        ajax: {
-            url: url,
-            type: "POST",
-            data: function (d) {
-                return $.extend({}, d, extraData, { page: d.start/d.length + 1 });
-            }
-        },
-        columns: columns,
-        order: order,
-    };
-
-    if (fnDrawCallback) {
-        config.fnDrawCallback = fnDrawCallback;
-    }
-    if (createdRow) {
-        config.createdRow = createdRow;
-    }
-
-    var tableName = $(selector).DataTable(config);
-
-    return tableName
-        .on('init.dt', function() {
-            if (page !== 0) {
-                console.log("init.dt:"+page)
-                tableName.page(page).draw(false);
-            }
-        })
-        .on('draw', function() {
-            var currentPage = tableName.page.info().page + 1;
-            console.log("draw: "+currentPage)
-            var url = new URL(window.location.href);
-            url.searchParams.set('page', currentPage);
-            window.history.pushState({}, '', url);
-        })
-        ;
-}
 
 function setupDataTable(selector, url, columns, order, extraData, fnDrawCallback, createdRow) {
     $.fn.dataTable.ext.errMode = 'throw';
@@ -326,7 +282,6 @@ function setupDataTable(selector, url, columns, order, extraData, fnDrawCallback
     if (urlSearchParams.has('page')) {
         currentPage = parseInt(urlSearchParams.get('page'));
     }
-
     var config = {
         displayLength: paginate,
         processing: false,
@@ -354,16 +309,23 @@ function setupDataTable(selector, url, columns, order, extraData, fnDrawCallback
         config.createdRow = createdRow;
     }
 
+
     var tableName = $(selector).DataTable(config);
 
-    // Sử dụng sự kiện pageChange để cập nhật url
-    tableName.on('pageChange', function(event, data) {
-        currentPage = data.newPage;
-        // Cập nhật url trong phần tử <a>
-        $(event.target).children('a').attr('href', new URL(window.location.href).toString().replace(/page=[^&]+/, 'page=' + currentPage));
-    });
+    return tableName
+        .on('init.dt', function() {
+            if (page !== 0) {
+                tableName.page(page).draw(false);
+            }
+        })
+        .on('draw', function() {
+            var currentPage = tableName.page.info().page + 1;
+            var url = new URL(window.location.href);
+            url.searchParams.set('page', currentPage);
+            window.history.pushState({}, '', url);
+        });
 
-    return tableName;
+    // return tableName;
 }
 
 function setupMagnificPopup(selector) {

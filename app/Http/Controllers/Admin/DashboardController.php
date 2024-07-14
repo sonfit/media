@@ -19,6 +19,7 @@ use App\Rules\FileTypeValidate;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Stevebauman\Purify\Facades\Purify;
@@ -29,26 +30,52 @@ class DashboardController extends Controller
 {
     use Upload;
 
-    public function __construct()
-    {
-        $this->middleware(['auth']);
-    }
-
     public function forbidden()
     {
         return view('admin.errors.403');
     }
+
     public function dashboard()
     {
-        $data['domain'] = Domain::count();
-        $data['tags'] = Tags::count();
-        $data['iplist'] = IPLIST::count();
-        $data['wallpapers'] = Wallpapers::count();
-        $data['ringtones'] = Ringtones::count();
-        $data['musics'] = Musics::count();
+        $wallpaperCount = Wallpapers::count();
+        $ringtoneCount = Ringtones::count();
+        $musicCount = Musics::count();
+
+        $data['wallpapers_active'] = Cache::get('wallpapers_active', function () use ($wallpaperCount) {
+            return Wallpapers::where('wallpaper_status', 1)->count();
+        });
+
+        $data['wallpapers_inactive'] = $wallpaperCount - $data['wallpapers_active'];
+
+        $data['ringtones_active'] = Cache::get('ringtones_active', function () use ($ringtoneCount) {
+            return Ringtones::where('ringtone_status', 1)->count();
+        });
+
+        $data['ringtones_inactive'] = $ringtoneCount - $data['ringtones_active'];
+
+        $data['musics_active'] = Cache::get('musics_active', function () use ($musicCount) {
+            return Musics::where('music_status', 1)->count();
+        });
+
+        $data['musics_inactive'] = $musicCount - $data['musics_active'];
+
+
+        $data = [
+            'domain' => number_format(Domain::count()),
+            'tags' => number_format(Tags::count()),
+            'iplist' => number_format(IPLIST::count()),
+
+            'wallpapers' => number_format($wallpaperCount),
+            'wallpapers_inactive' => number_format($data['wallpapers_inactive']),
+
+            'ringtones' => number_format($ringtoneCount),
+            'ringtones_inactive' => number_format($data['ringtones_inactive']),
+
+            'musics' => number_format($musicCount),
+            'musics_inactive' => number_format($data['musics_inactive']),
+        ];
         return view('admin.dashboard', $data);
     }
-
 
     public function getPlatformData(Request $request): array
     {
@@ -139,14 +166,11 @@ class DashboardController extends Controller
         return $data;
     }
 
-
-
     public function profile()
     {
         $admin = Auth::user();
         return view('admin.profile', compact('admin'));
     }
-
 
     public function profileUpdate(Request $request)
     {
@@ -182,7 +206,6 @@ class DashboardController extends Controller
 
         return back()->with('success', 'Updated Successfully.');
     }
-
 
     public function password()
     {

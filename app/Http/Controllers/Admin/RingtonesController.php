@@ -12,10 +12,6 @@ use Illuminate\Support\Facades\Storage;
 class RingtonesController extends Controller
 {
 
-    public function __construct()
-    {
-        $this->middleware(['auth'])->except('compareRingtones');
-    }
     public function index()
     {
         if(!Auth::user()->can('admin.ringtones')){
@@ -33,7 +29,8 @@ class RingtonesController extends Controller
             ]);
         }
         $draw = $request->input('draw');
-        $rowperpage = $request->input('length');
+        $start = $request->get("start");
+        $length = $request->input('length');
         $page = $request->input('page');
 
         $columnIndex = $request->input('order')[0]['column'];
@@ -55,7 +52,10 @@ class RingtonesController extends Controller
 
         $records = $ringtonesQuery
             ->orderBy($columnName, $columnSortOrder)
-            ->paginate($rowperpage, ['*'], 'page', $page);
+            ->skip($start)
+            ->take($length)
+            ->get();
+//            ->paginate($rowperpage, ['*'], 'page', $page);
 
         if (!isset($searchValue)) {
             $totalRecords = $totalRecordswithFilter;

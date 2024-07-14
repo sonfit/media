@@ -3,10 +3,10 @@
 @section('button')
 
         <div class="d-flex justify-content-end m-2 text-right">
-            @can('admin.musics.create')
-                <button class="btn btn-warning btn-sm mr-2" id="updateMusics">
+            @can('admin.musics.edit')
+                <a class="btn btn-warning btn-sm mr-2" href="{{route('admin.musics.updateMusics')}}?action=auto&time=1&limit=5" target="_blank">
                     <i class="fa fa-spinner"></i> {{trans('Update Link')}}
-                </button>
+                </a>
             @endcan
             @can('admin.musics.create')
                 <button class="btn btn-primary btn-sm mr-2" id="createMusics">
@@ -26,8 +26,10 @@
                 <table class="table table-hover table-striped table-bordered" id="tableMusics" style="width: 100%">
                     <thead class="thead-dark">
                     <tr>
+                        <th scope="col">@lang('ID')</th>
                         <th scope="col">@lang('Image')</th>
                         <th scope="col">@lang('ID')</th>
+                        <th scope="col">@lang('Title')</th>
                         <th scope="col">@lang('Tags')</th>
                         <th scope="col">@lang('Action')</th>
                     </tr>
@@ -101,8 +103,10 @@
                 '#tableMusics',
                 "{{ route('admin.musics.getIndex') }}",
                 [
+                    {data: 'id', name: 'id'},
                     {data: 'music_thumb', name: 'music_thumb'},
                     {data: 'music_url', name: 'music_url'},
+                    {data: 'music_title', name: 'music_title'},
                     {data: 'music_tags', name: 'music_tags',orderable: false},
                     {data: 'action', name: 'action', orderable: false, searchable: false},
                 ],
@@ -114,7 +118,14 @@
                             audio.pause();
                         });
                     });
-                }
+                },
+                function (nRow, aData) {
+                    if(aData.music_expire){
+                        $('td', nRow).css('background-color', 'rgba(253,0,0,0.07)');
+                    }else {
+                        $('td', nRow).css('background-color', 'rgba(255,255,255,0)');
+                    }
+                },
             );
             setupDataTableScrollTop(tableMusics,100);
 
@@ -229,23 +240,9 @@
                     },
                     success: function (data) {
                         row.music_url = '<audio class="playback" src='+data.music.music_url+'  controls="controls" preload="none"></audio>';
-                        row.music_thumb = '<img src="'+data.music.music_thumb+'" height="55">'
+                        row.music_thumb = '<a target="_blank" href="https://www.youtube.com/watch?v='+data.music.music_id_ytb+'"><img src="'+data.music.music_thumb+'" height="55"></a>'
                         tableMusics.row($element).data(row);
-                        Notiflix.Notify.Success(data.success);
-                    },
-                    error: function (data) {
-                        console.log('Error:', data);
-                    }
-                });
-            });
-
-            $(document).on('click','#updateMusics', function (data){
-
-                $.ajax({
-                    type: "get",
-                    url: "{{route('admin.musics.updateMusics')}}",
-                    success: function (data) {
-                        tableMusics.draw();
+                        $('td', $element).css('background-color', 'rgba(255,255,255,0)');
                         Notiflix.Notify.Success(data.success);
                     },
                     error: function (data) {

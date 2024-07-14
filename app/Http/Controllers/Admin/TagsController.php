@@ -11,10 +11,7 @@ use Stevebauman\Purify\Facades\Purify;
 
 class TagsController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(['auth']);
-    }
+
     //==================Admin===================
     public function index()
     {
@@ -33,7 +30,8 @@ class TagsController extends Controller
             ]);
         }
         $draw = $request->input('draw');
-        $rowperpage = $request->input('length');
+        $start = $request->get("start");
+        $length = $request->input('length');
         $page = $request->input('page');
 
         $columnIndex = $request->input('order')[0]['column'];
@@ -52,7 +50,10 @@ class TagsController extends Controller
 
         $records = $tagsQuery
             ->orderBy($columnName, $columnSortOrder)
-            ->paginate($rowperpage, ['*'], 'page', $page);
+            ->skip($start)
+            ->take($length)
+            ->get();
+//            ->paginate($rowperpage, ['*'], 'page', $page);
 
         if (!isset($searchValue)) {
             $totalRecords = $totalRecordsFilter;

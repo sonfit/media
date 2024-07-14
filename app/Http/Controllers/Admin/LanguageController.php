@@ -140,7 +140,6 @@ class LanguageController extends Controller
         }
     }
 
-
     public function keywordEdit($id)
     {
         $lang = Language::findOrFail($id);
@@ -175,10 +174,6 @@ class LanguageController extends Controller
         file_put_contents(resource_path('lang/') . $myLang->short_name . '.json', json_encode($jsonArray,JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
         return 'success';
     }
-
-
-
-
 
     public function storeKey(Request $request, $id)
     {
@@ -224,7 +219,6 @@ class LanguageController extends Controller
         file_put_contents(resource_path('lang/'). $lang->short_name . '.json', json_encode($jsonArray,JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
         return back()->with('success', "`$requestKey` has been removed");
     }
-
 
     public function updateKey(Request $request, $id)
     {

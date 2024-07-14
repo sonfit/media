@@ -47,7 +47,7 @@
                         <div class="d-flex d-lg-flex d-md-block align-items-center">
                             <div>
                                 <div class="d-inline-flex align-items-center">
-                                    <h2 class="text-dark mb-1 font-weight-medium">{{number_format($iplist)}}</h2>
+                                    <h2 class="text-dark mb-1 font-weight-medium">{{$iplist}}</h2>
                                 </div>
                                 <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">@lang('Today IP Block')</h6>
                             </div>
@@ -65,7 +65,7 @@
                         <div class="d-flex d-lg-flex d-md-block align-items-center">
                             <div>
                                 <div class="d-inline-flex align-items-center">
-                                    <h2 class="text-dark mb-1 font-weight-medium">{{$wallpapers}}</h2>
+                                    <h2 class="text-dark mb-1 font-weight-medium">{{$wallpapers}}</h2> / <code>{{$wallpapers_inactive}}</code>
                                 </div>
                                 <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">@lang('Wallpapers')</h6>
                             </div>
@@ -83,7 +83,7 @@
                         <div class="d-flex d-lg-flex d-md-block align-items-center">
                             <div>
                                 <div class="d-inline-flex align-items-center">
-                                    <h2 class="text-dark mb-1 font-weight-medium">{{$ringtones}}</h2>
+                                    <h2 class="text-dark mb-1 font-weight-medium">{{$ringtones}}</h2> / <code>{{$ringtones_inactive}}</code>
                                 </div>
                                 <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">@lang('Ringtones')</h6>
                             </div>
@@ -101,7 +101,7 @@
                         <div class="d-flex d-lg-flex d-md-block align-items-center">
                             <div>
                                 <div class="d-inline-flex align-items-center">
-                                    <h2 class="text-dark mb-1 font-weight-medium">{{$musics}}</h2>
+                                    <h2 class="text-dark mb-1 font-weight-medium">{{$musics}}</h2> / <code>{{$musics_inactive}}</code>
                                 </div>
                                 <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">@lang('Musics')</h6>
                             </div>

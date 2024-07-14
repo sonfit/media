@@ -6,8 +6,11 @@ use App\Http\Controllers\Api\V4Controller;
 use App\Http\Controllers\Api\V7Controller;
 use App\Http\Controllers\Api\V9Controller;
 use App\Http\Controllers\ApiController;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Torann\GeoIP\Facades\GeoIP;
+use hisorange\BrowserDetect\Parser as Browser;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +26,25 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/check-login', function (){
+    $geoIP =  new GeoIP();
+    $agent = new Browser();
+    $ip_address = getIp();
+    $ip_prefix = getIpPrefix(getIp());
+    $location = $geoIP::getLocation($ip_address);
+    return [
+        'ip_address' => $ip_address,
+        'ip_prefix' => $ip_prefix,
+        'device_name' => $agent->deviceType(),
+        'browser' => $agent->browserFamily(),
+        'device_name_full' => $agent->userAgent(),
+        'platform_name' => $agent->platformFamily(),
+        'country' => (string) $location['country'],
+        'created_at' => Carbon::now()->startOfDay()
+    ];
+
+})->name('api.check');
 
 Route::get('/get-users', [ApiController::class, 'getUsers'])->name('api.getUsers');
 Route::get('/get-domains', [ApiController::class, 'getDomains'])->name('api.getDomains');

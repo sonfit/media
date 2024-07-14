@@ -213,10 +213,7 @@
                     }
                 });
             });
-
-
         })
     </script>
-{{--    <script src="{{ asset('assets/admin/js/wallpaper.js')}}"></script>--}}
 
 @endpush

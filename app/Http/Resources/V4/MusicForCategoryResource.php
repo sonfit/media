@@ -20,7 +20,7 @@ class MusicForCategoryResource extends JsonResource
                 'slider_title' => $this->category_name,
                 'slider_info' => $this->category_name,
                 'songs_ids' => "",
-                'slider_image' => $this->category_image ?  asset('storage/domains/'.$this->domain_id.'/categories/'.$this->category_image) : asset('storage/defaultCate.png'),
+                'slider_image' => $this->category_image ?  asset('storage/categories/'.$this->category_image) : asset('storage/defaultCate.png'),
             ];
 
 

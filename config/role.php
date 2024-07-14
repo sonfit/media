@@ -85,6 +85,18 @@ $arr = [
         ],
     ],
 
+    'domain_login_log_management' => [
+        'label' => "Logs Domain Management",
+        'access' => [
+            'view' => [
+                'admin.domainLoginLogs',
+            ],
+            'add' => [],
+            'edit' => [],
+            'delete' => [],
+        ],
+    ],
+
     'wallpapers_management' => [
         'label' => "Wallpapers Management",
         'access' => [

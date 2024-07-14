@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 use \Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 class Categories extends Model
@@ -11,6 +12,21 @@ class Categories extends Model
     use HasFactory, HasRelationships;
     protected $guarded=[];
 
+
+    public static function booted()
+    {
+        static::deleting(function ($category) {
+            $pathImage      =   storage_path('app/public/categories/').$category->category_image;
+            try {
+                if(file_exists($pathImage)){
+                    unlink($pathImage);
+                }
+            }catch (\Exception $ex) {
+                Log::error($ex->getMessage());
+            }
+            $category->tags()->detach();
+        });
+    }
 
     public function domain(){
         return $this->belongsTo(Domain::class, 'domain_id');

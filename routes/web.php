@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\Auth\ResetPasswordController;
 use App\Http\Controllers\Admin\BasicController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DomainController;
+use App\Http\Controllers\Admin\DomainLoginLogsController;
 use App\Http\Controllers\Admin\IpblockController;
 use App\Http\Controllers\Admin\LanguageController;
 use App\Http\Controllers\Admin\LoginController;
@@ -27,6 +28,8 @@ Route::middleware(['checkAppUrl'])->group(function () {
         return $output->fetch();
     })->name('/clear');
 
+
+
     Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
         Route::post('/', [LoginController::class, 'login'])->name('login');
@@ -46,6 +49,32 @@ Route::middleware(['checkAppUrl'])->group(function () {
                 ],
 
             ], function () {
+
+            Route::get('/link',function (){
+                echo  Artisan::call('storage:link');
+            });
+
+            Route::get('routes', function () {
+                $routeCollection = Route::getRoutes();
+
+                echo "<table style='width:100%'>";
+                echo "<tr>";
+                echo "<td style='width:10%'><h4>HTTP Method</h4></td>";
+                echo "<td style='width:10%'><h4>Route</h4></td>";
+                echo "<td style='width:10%'><h4>Name</h4></td>";
+                echo "<td style='width:70%'><h4>Corresponding Action</h4></td>";
+                echo "</tr>";
+                foreach ($routeCollection as $value) {
+                    echo "<tr>";
+                    echo "<td>" . $value->methods()[0] . "</td>";
+                    echo "<td>" . $value->uri() . "</td>";
+                    echo "<td>" . $value->getName() . "</td>";
+                    echo "<td>" . $value->getActionName() . "</td>";
+                    echo "</tr>";
+                }
+                echo count($routeCollection);
+                echo "</table>";
+            });
 
             Route::get('/profile', [DashboardController::class, 'profile'])->name('profile');
             Route::put('/profile', [DashboardController::class, 'profileUpdate'])->name('profileUpdate');
@@ -89,52 +118,57 @@ Route::middleware(['checkAppUrl'])->group(function () {
                 Route::post('delete', [TagsController::class, 'delete'])->name('.delete');
             });
 
-            Route::group(['prefix' => 'domains', 'as' => 'domain'], function () {
+            Route::group(['prefix' => 'domains', 'as' => 'domain.'], function () {
                 Route::get('/', [DomainController::class, 'index']);
-                Route::post('/getIndex', [DomainController::class, 'getIndex'])->name('.getIndex');
-                Route::post('/', [DomainController::class, 'store'])->name('.store');
-                Route::get('edit/{id}', [DomainController::class, 'edit'])->name('.edit');
-                Route::post('update', [DomainController::class, 'update'])->name('.update');
-                Route::post('delete', [DomainController::class, 'delete'])->name('.delete');
-
+                Route::post('/getIndex', [DomainController::class, 'getIndex'])->name('getIndex');
+                Route::post('/', [DomainController::class, 'store'])->name('store');
+                Route::get('edit/{id}', [DomainController::class, 'edit'])->name('edit');
+                Route::post('update', [DomainController::class, 'update'])->name('update');
+                Route::post('delete', [DomainController::class, 'delete'])->name('delete');
+                Route::get('/get-info-aio/{project}', [DomainController::class, 'getInfoAIO'])->name('getInfoAIO');
+                Route::post('/multipleUpdate', [DomainController::class, 'multipleUpdate'])->name('multipleUpdate');
 
                 //Ads
-                Route::get('{id}/manage-ads', [DomainController::class, 'manageAds'])->name('.manage_ads');
-                Route::post('update-ads', [DomainController::class, 'updateAds'])->name('.updateAds');
+                Route::get('{id}/manage-ads', [DomainController::class, 'manageAds'])->name('manage_ads');
+                Route::post('update-ads', [DomainController::class, 'updateAds'])->name('updateAds');
 
                 //Home
-                Route::get('{id}/manage-home', [DomainController::class, 'manageHome'])->name('.manage_home');
-                Route::post('update-home', [DomainController::class, 'updateHome'])->name('.updateHome');
+                Route::get('{id}/manage-home', [DomainController::class, 'manageHome'])->name('manage_home');
+                Route::post('update-home', [DomainController::class, 'updateHome'])->name('updateHome');
 
                 //Config
-                Route::get('{id}/config', [DomainController::class, 'config'])->name('.config');
-                Route::post('update-config', [DomainController::class, 'updateConfig'])->name('.updateConfig');
+                Route::get('{id}/config', [DomainController::class, 'config'])->name('config');
+                Route::post('update-config', [DomainController::class, 'updateConfig'])->name('updateConfig');
 
                 //Category
-                Route::get('{id}/categories', [DomainController::class, 'categories'])->name('.categories');
-                Route::post('get-categories', [DomainController::class, 'getDomainCategories'])->name('.getDomainCategories');
-                Route::post('category', [DomainController::class, 'storeCategory'])->name('.storeCategory');
-                Route::get('edit-category', [DomainController::class, 'editCategory'])->name('.editCategory');
-                Route::post('update-category', [DomainController::class, 'updateCategory'])->name('.updateCategory');
-                Route::get('delete-category', [DomainController::class, 'deleteCategory'])->name('.deleteCategory');
-
+                Route::get('{id}/categories', [DomainController::class, 'categories'])->name('categories');
+                Route::post('get-categories', [DomainController::class, 'getDomainCategories'])->name('getDomainCategories');
+                Route::post('category', [DomainController::class, 'storeCategory'])->name('storeCategory');
+                Route::get('edit-category', [DomainController::class, 'editCategory'])->name('editCategory');
+                Route::post('update-category', [DomainController::class, 'updateCategory'])->name('updateCategory');
+                Route::get('delete-category', [DomainController::class, 'deleteCategory'])->name('deleteCategory');
 
                 //Wallpaper
-                Route::get('{id}/wallpapers', [DomainController::class, 'wallpapers'])->name('.wallpapers');
-                Route::get('{id}/get-wallpapers', [DomainController::class, 'getDomainWallpapers'])->name('.getDomainWallpapers');
+                Route::get('{id}/wallpapers', [DomainController::class, 'wallpapers'])->name('wallpapers');
+                Route::get('{id}/get-wallpapers', [DomainController::class, 'getDomainWallpapers'])->name('getDomainWallpapers');
 
                 //Ringtones
-                Route::get('{id}/ringtones', [DomainController::class, 'ringtones'])->name('.ringtones');
-                Route::post('{id}/get-ringtones', [DomainController::class, 'getDomainRingtones'])->name('.getDomainRingtones');
+                Route::get('{id}/ringtones', [DomainController::class, 'ringtones'])->name('ringtones');
+                Route::post('{id}/get-ringtones', [DomainController::class, 'getDomainRingtones'])->name('getDomainRingtones');
 
                 //Musics
-                Route::get('{id}/musics', [DomainController::class, 'musics'])->name('.musics');
-                Route::post('{id}/get-musics', [DomainController::class, 'getDomainMusics'])->name('.getDomainMusics');
+                Route::get('{id}/musics', [DomainController::class, 'musics'])->name('musics');
+                Route::post('{id}/get-musics', [DomainController::class, 'getDomainMusics'])->name('getDomainMusics');
 
                 //Logs
-                Route::get('{id}/logs', [DomainController::class, 'logs'])->name('.logs');
-                Route::post('{id}/get-logs', [DomainController::class, 'getDomainLogs'])->name('.getDomainLogs');
+                Route::get('{id}/logs', [DomainController::class, 'logs'])->name('logs');
+                Route::post('{id}/get-logs', [DomainController::class, 'getDomainLogs'])->name('getDomainLogs');
 
+            });
+
+            Route::group(['prefix' => 'domains-logs', 'as' => 'domainLoginLogs'], function () {
+                Route::get('/', [DomainLoginLogsController::class, 'index']);
+                Route::post('/getIndex', [DomainLoginLogsController::class, 'getIndex'])->name('.getIndex');
             });
 
             Route::group(['prefix' => 'wallpapers', 'as' => 'wallpapers'], function () {
@@ -147,7 +181,7 @@ Route::middleware(['checkAppUrl'])->group(function () {
                 Route::post('update', [WallpapersController::class, 'update'])->name('.update');
                 Route::post('delete', [WallpapersController::class, 'delete'])->name('.delete');
                 Route::post('delete-tag', [WallpapersController::class, 'deleteTag'])->name('.deleteTag');
-                Route::get('compare-images', [WallpapersController::class, 'compareImages'])->name('.compareImages');
+                Route::get('compare-images', [WallpapersController::class, 'compareImages'])->name('.compareImages')->withoutMiddleware(['auth:admin']);
             });
 
             Route::group(['prefix' => 'ringtones', 'as' => 'ringtones'], function () {
@@ -158,8 +192,8 @@ Route::middleware(['checkAppUrl'])->group(function () {
                 Route::post('update', [RingtonesController::class, 'update'])->name('.update');
                 Route::post('delete', [RingtonesController::class, 'delete'])->name('.delete');
                 Route::post('delete-tag', [RingtonesController::class, 'deleteTag'])->name('.deleteTag');
-                Route::get('compare-ringtones', [RingtonesController::class, 'compareRingtones'])->name('.compareRingtones');
-                Route::get('md5-hash', [RingtonesController::class, 'md5Hash'])->name('.md5Hash');
+                Route::get('compare-ringtones', [RingtonesController::class, 'compareRingtones'])->name('.compareRingtones')->withoutMiddleware(['auth:admin']);
+                Route::get('md5-hash', [RingtonesController::class, 'md5Hash'])->name('.md5Hash')->withoutMiddleware(['auth:admin']);
             });
 
             Route::group(['prefix' => 'musics', 'as' => 'musics'], function () {
@@ -172,7 +206,7 @@ Route::middleware(['checkAppUrl'])->group(function () {
                 Route::post('delete-tag', [MusicsController::class, 'deleteTag'])->name('.deleteTag');
                 Route::get('get-info', [MusicsController::class, 'getInfo'])->name('.getInfo')->withoutMiddleware(['auth:admin']);
                 Route::get('redirect-link', [MusicsController::class, 'redirectLinkYTB'])->name('.redirectLinkYTB')->withoutMiddleware(['auth:admin']);
-                Route::get('update-musics', [MusicsController::class, 'updateMusics'])->name('.updateMusics');
+                Route::get('update-musics', [MusicsController::class, 'updateMusics'])->name('.updateMusics')->withoutMiddleware(['auth:admin']);
             });
 
             /* ======== CONTROLS ========== */

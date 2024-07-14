@@ -15,11 +15,6 @@ use YouTube\YouTubeDownloader;
 class MusicsController extends Controller
 {
 
-    public function __construct()
-    {
-        $this->middleware('auth')->except('getInfo', 'redirectLinkYTB');
-    }
-
     public function index()
     {
         if(!Auth::user()->can('admin.musics')){
@@ -37,7 +32,8 @@ class MusicsController extends Controller
             ]);
         }
         $draw = $request->input('draw');
-        $rowperpage = $request->input('length');
+        $start = $request->get("start");
+        $length = $request->input('length');
         $page = $request->input('page');
 
         $columnIndex = $request->input('order')[0]['column'];
@@ -60,7 +56,10 @@ class MusicsController extends Controller
 
         $records = $musicsQuery
             ->orderBy($columnName, $columnSortOrder)
-            ->paginate($rowperpage, ['*'], 'page', $page);
+            ->skip($start)
+            ->take($length)
+            ->get();
+//            ->paginate($rowperpage, ['*'], 'page', $page);
 
         if (!isset($searchValue)) {
             $totalRecords = $totalRecordswithFilter;
@@ -78,12 +77,13 @@ class MusicsController extends Controller
                             <i class="fa fa-times close-icon deleteMusicTag" data-music="'.$record->id.'" data-tag="'.$tag->id.'"></i>
                         </span>';
             }
-
             $data_arr[] = array(
                 "id" => $record->id,
-                "music_thumb" => '<img src="' . $record->music_thumb . '" height="55">',
+                "music_expire" => $record->music_expire < time(),
+                "music_thumb" => '<a target="_blank" href="https://www.youtube.com/watch?v='.$record->music_id_ytb.'"><img src="' . $record->music_thumb . '" height="55"></a>',
                 "music_url" => '<audio class="playback" src='.$record->music_url.'  controls="controls" preload="none"></audio>',
                 "music_tags" => $tags,
+                "music_title" => '<p class="text-dark mb-0 font-16 font-medium">Length: '.gmdate("H:i:s", $record->music_lengthSeconds).'</p><span class="text-muted font-14">'.$record->music_title.'</span>',
                 "action"=> $btn,
             );
         }
@@ -157,24 +157,26 @@ class MusicsController extends Controller
 
     public function getInfo(Request $request){
         $music_id_ytb = trim($request->music_id_ytb);
-        $youtube = new YouTubeDownloader();
-        $downloadOptions = $youtube->getDownloadLinks($music_id_ytb);
-        $info = $downloadOptions->getInfo();
-
         $music = Musics::where('music_id_ytb',$music_id_ytb)->firstorFail();
         if($music->music_expire < time()){
             try {
+                $youtube = new YouTubeDownloader();
+                $downloadOptions = $youtube->getDownloadLinks($music_id_ytb);
+                $info = $downloadOptions->getInfo();
                 $music->update([
                     'music_url' => $downloadOptions->getFirstCombinedFormat()->url,
-                    'music_thumb' =>  $info->getThumbnail()[0]['url'],
-                    'music_title' => $info->getTitle(),
+                    'music_thumb' =>   $youtube->getThumbnails($music_id_ytb)['default'],
+                    'music_title' => $info->title,
                     'music_expire' =>$this->getValueFromUrl($downloadOptions->getFirstCombinedFormat()->url,'expire'),
-                    'music_lengthSeconds' => $info->getLengthSeconds(),
+                    'music_lengthSeconds' =>$info->durationSeconds,
                     'music_status' => 1,
                 ]);
 
             }catch (\Exception $exception) {
-                $music->update(['music_status'=> 0]);
+                $music->update([
+                    'music_status'=> 0,
+                    'music_expire' => time()+21600,
+                    ]);
             }
         }
         return response()->json([
@@ -189,36 +191,75 @@ class MusicsController extends Controller
         return redirect($musicInfo->music->music_url);
     }
 
-    public function updateMusics(YouTubeDownloader $youtube){
-        Musics::latest()
-            ->where('music_url',null )
-            ->orWhere('music_expire','<', time())
-            ->chunk(200, function ($musics) use ($youtube) {
-            $updateMusic = [];
+    public function updateMusics(Request $request, YouTubeDownloader $youtube){
+        $order = $request->input('order', 'id');
+        $limit = $request->input('limit', 5);
+        $time = $request->input('time', 2);
+        $status = $request->input('status', 1);
 
+        try {
+            $musics = Musics::latest()
+                ->where('music_status','<>',$status)
+                ->where(function ($query) {
+                    $query->where('music_url',null)
+                        ->orWhere('music_expire', '<', time());
+                })
+                ->limit($limit)
+                ->get();
+
+            if ($musics->isEmpty()) {
+                echo "No music found. Stopping execution.";
+                return;
+            }
+
+            $updateMusic = [];
+            $result = '';
             foreach ($musics as $item){
                 $music_id_ytb = $item->music_id_ytb;
-                $downloadOptions = $youtube->getDownloadLinks($music_id_ytb);
-                $info = $downloadOptions->getInfo();
-                $updateMusic[] = [
+                try {
+                    $downloadOptions = $youtube->getDownloadLinks($music_id_ytb);
+                    $info = $downloadOptions->getInfo();
+                    $format = $downloadOptions->getFirstCombinedFormat();
+                    $music_status = 1;
+                    $updateMusic[] = [
                         'id' => $item->id,
-                        'music_id_ytb' => $item->music_id_ytb,
-                        'music_title' => $info->getTitle(),
-                        'music_url' =>  $downloadOptions->getFirstCombinedFormat()->url,
-                        'music_thumb' =>   $info->getThumbnail()[0]['url'],
-                        'music_expire' =>   $this->getValueFromUrl($downloadOptions->getFirstCombinedFormat()->url,'expire'),
-                        'music_lengthSeconds' => $info->getLengthSeconds(),
-                        'music_status' => 1,
+                        'music_id_ytb' => $music_id_ytb,
+                        'music_title' => $info->title,
+                        'music_url' =>  $format->url,
+                        'music_thumb' =>   $youtube->getThumbnails($music_id_ytb)['default'],
+                        'music_expire' =>   $this->getValueFromUrl($format->url,'expire'),
+                        'music_lengthSeconds' =>$info->durationSeconds,
+                        'music_status' => $music_status,
                     ];
+                }catch (\Exception $exception) {
+                    $music_status = $item->music_status + 2;
+                    if ($item->music_status > 6) {
+                        $item->delete();
+                    } else {
+                        $updateMusic[] = [
+                            'id' => $item->id,
+                            'music_status' => $music_status,
+                            'music_expire' => time()+21600,
+                        ];
+                    }
+                }
+                $result .= 'Processing: ' . $item->music_id_ytb .' - Status: '.$item->music_status.' -> '.$music_status. '<br>';
             }
-            $musicInstance = new Musics();
-            $index = 'id';
-            batch()->update($musicInstance, $updateMusic, $index);
-            return response()->json([
-                'success'=> 'Update Successfully.',
-            ]);
-        });
+            $batch = batch()->update(new Musics(), $updateMusic, 'id');
+            echo "<pre>";
+            print_r ($result);
+            print_r ($batch);
+            echo "</pre>";
+            if($request->input('action') == 'auto'){
+                echo '<META http-equiv="refresh" content="'.$time.';URL='.route('admin.musics.updateMusics').'?order='.$order.'&action=auto&time='.$time.'&limit='.$limit.'&status="'.$status.'>';
+            }
+        } catch (\Exception $exception) {
+            echo "An error occurred: " . $exception->getMessage().'- Line: '.$exception->getLine() . "<br>";
+            echo "Refreshing in 5 seconds...";
+            echo '<META http-equiv="refresh" content="5;URL=' . route('admin.musics.updateMusics') . '?order='.$order.'&action=auto&time='.$time.'&limit='.$limit.'&status="'.$status.'">';
+        }
     }
+
     public function getValueFromUrl($url,$param){
         $pos = strpos($url, $param.'=');
         if ($pos !== false) {

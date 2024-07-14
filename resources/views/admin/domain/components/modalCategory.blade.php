@@ -100,7 +100,7 @@
                             applySelect2('#category_tags', "", '{{route('api.getTags')}}',data.tags);
                             $("#category_status").prop("checked", data.category_checked_ip !== 1);
                             var imagePath = data.category_image !== ''
-                                ? '/storage/domains/' + data.domain_id + '/categories/' + data.category_image
+                                ? '/storage/categories/' + data.category_image
                                 : '/storage/defaultCate.png';
                             $('#image_preview_container').attr('src', imagePath);
                         }
