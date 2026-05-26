@@ -177,4 +177,5 @@ Route::group([
     Route::get('wallpapers/{idOrSlug}', [V10Controller::class, 'wallpaper']);
     Route::get('wallpapers-by-categories', [V10Controller::class, 'wallpapersByCategories']);
     Route::get('preload', [V10Controller::class, 'preload']);
+    Route::get('admob', [V10Controller::class, 'admob']);
 });
