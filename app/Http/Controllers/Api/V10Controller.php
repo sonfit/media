@@ -34,7 +34,7 @@ class V10Controller extends Controller
             'page' => $categories->currentPage(),
             'limit' => (int)$limit,
             'total' => $categories->total(),
-            'categories' => CategoriesResource::collection($categories)
+            'categories1' => CategoriesResource::collection($categories)
         ]);
     }
 
