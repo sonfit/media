@@ -32,7 +32,7 @@ Route::middleware(['checkAppUrl'])->group(function () {
 
     Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::get('/', [LoginController::class, 'showLoginForm'])->name('login');
-        Route::post('/', [LoginController::class, 'login'])->name('login');
+        Route::post('/', [LoginController::class, 'login']);
         Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
         Route::group(['prefix' => 'password', 'as' => 'password.'], function () {
