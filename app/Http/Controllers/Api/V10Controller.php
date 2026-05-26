@@ -151,11 +151,11 @@ class V10Controller extends Controller
 
         $configData = json_decode($defaultConfigJson, true);
 
-        $admob_banner = ($ads && isset($ads['banner_ads_id'])) ? $ads['banner_ads_id'] : 'ca-app-pub-3940256099942544/6300978111';
-        $admob_interstitial = ($ads && isset($ads['interstitial_ads_id'])) ? $ads['interstitial_ads_id'] : 'ca-app-pub-3940256099942544/1033173712';
-        $admob_open = ($ads && isset($ads['open_ads_id'])) ? $ads['open_ads_id'] : 'ca-app-pub-3940256099942544/3419835294';
-        $admob_native = ($ads && isset($ads['native_ads_id'])) ? $ads['native_ads_id'] : 'ca-app-pub-3940256099942544/2247696110';
-        $admob_reward = ($ads && isset($ads['rewarded_ads_id'])) ? $ads['rewarded_ads_id'] : 'ca-app-pub-3940256099942544/5224354917';
+        $admob_banner = ($ads && !empty($ads['banner_ads_id'])) ? $ads['banner_ads_id'] : 'ca-app-pub-3940256099942544/6300978111';
+        $admob_interstitial = ($ads && !empty($ads['interstitial_ads_id'])) ? $ads['interstitial_ads_id'] : 'ca-app-pub-3940256099942544/1033173712';
+        $admob_open = ($ads && !empty($ads['open_ads_id'])) ? $ads['open_ads_id'] : 'ca-app-pub-3940256099942544/3419835294';
+        $admob_native = ($ads && !empty($ads['native_ads_id'])) ? $ads['native_ads_id'] : 'ca-app-pub-3940256099942544/2247696110';
+        $admob_reward = ($ads && !empty($ads['rewarded_ads_id'])) ? $ads['rewarded_ads_id'] : 'ca-app-pub-3940256099942544/5224354917';
         
         $isAdsOn = (bool)$domain->is_ads;
 
