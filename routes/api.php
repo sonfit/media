@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V2Controller;
 use App\Http\Controllers\Api\V4Controller;
 use App\Http\Controllers\Api\V7Controller;
 use App\Http\Controllers\Api\V9Controller;
+use App\Http\Controllers\Api\V10Controller;
 use App\Http\Controllers\ApiController;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -167,3 +168,13 @@ Route::group([
 
 });
 
+Route::group([
+    "prefix" => "v10",
+], function() {
+    Route::get('/', [V10Controller::class, 'index']);
+    Route::get('/categories', [V10Controller::class, 'categories']);
+    Route::get('/wallpapers', [V10Controller::class, 'wallpapers']);
+    Route::get('/wallpapers/{idOrSlug}', [V10Controller::class, 'wallpaper']);
+    Route::get('/wallpapers-by-categories', [V10Controller::class, 'wallpapersByCategories']);
+    Route::get('/preload', [V10Controller::class, 'preload']);
+});
