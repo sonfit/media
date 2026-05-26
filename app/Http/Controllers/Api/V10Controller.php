@@ -86,7 +86,7 @@ class V10Controller extends Controller
         $domain = getDomain();
         $wallpaper = $domain->getWallpaper(checkBlockIp() ? 0 : 1)->findOrFail($idOrSlug);
         $wallpaper->increment('wallpaper_view_count');
-        
+
         return response()->json((new WallpapersResource($wallpaper))->resolve());
     }
 

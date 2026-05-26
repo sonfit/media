@@ -16,7 +16,7 @@ class CategoriesResource extends JsonResource
     {
         return [
             'name_slug' => $this->category_name,
-            'display_name'=>$this->category_view_count,
+            'display_name'=>$this->category_name,
         ];
     }
 }
