@@ -23,7 +23,7 @@ class V9Controller extends Controller
     }
 
     public function get_request_method() {
-        return $_SERVER['REQUEST_METHOD'];
+        return $_SERVER['REQUEST_METHOD'] ?? 'GET';
     }
 
     public function response($data, $status) {

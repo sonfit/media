@@ -172,9 +172,9 @@ Route::group([
     "prefix" => "v10",
 ], function() {
     Route::get('/', [V10Controller::class, 'index']);
-    Route::get('/categories', [V10Controller::class, 'categories']);
-    Route::get('/wallpapers', [V10Controller::class, 'wallpapers']);
-    Route::get('/wallpapers/{idOrSlug}', [V10Controller::class, 'wallpaper']);
-    Route::get('/wallpapers-by-categories', [V10Controller::class, 'wallpapersByCategories']);
-    Route::get('/preload', [V10Controller::class, 'preload']);
+    Route::get('categories', [V10Controller::class, 'categories']);
+    Route::get('wallpapers', [V10Controller::class, 'wallpapers']);
+    Route::get('wallpapers/{idOrSlug}', [V10Controller::class, 'wallpaper']);
+    Route::get('wallpapers-by-categories', [V10Controller::class, 'wallpapersByCategories']);
+    Route::get('preload', [V10Controller::class, 'preload']);
 });
