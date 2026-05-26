@@ -18,7 +18,7 @@ class V10Controller extends Controller
     private function getActiveCategories($limit, $isBlock)
     {
         return getDomain()->categories()
-//            ->where('category_checked_ip', $isBlock)
+            ->where('category_checked_ip', $isBlock)
             ->withCount('wallpapers')
             ->having('wallpapers_count', '>', 0)
             ->inRandomOrder()
@@ -29,6 +29,7 @@ class V10Controller extends Controller
     {
         $limit = $request->input('limit', 5);
         $categories = $this->getActiveCategories($limit, checkBlockIp() ? 0 : 1);
+//        dd(checkBlockIp());
 
         return response()->json([
             'page' => $categories->currentPage(),
