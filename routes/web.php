@@ -21,11 +21,17 @@ use Illuminate\Support\Facades\Artisan;
 
 Route::middleware(['checkAppUrl'])->group(function () {
 
-
     Route::get('/clear', function () {
         $output = new \Symfony\Component\Console\Output\BufferedOutput();
         Artisan::call('optimize:clear', array(), $output);
-        return $output->fetch();
+        
+        // Thêm đoạn này để xóa OPcache của PHP trên Server
+        if (function_exists('opcache_reset')) {
+            opcache_reset();
+            $output->writeln('PHP OPcache cleared successfully!');
+        }
+
+        return nl2br($output->fetch());
     })->name('/clear');
 
 
